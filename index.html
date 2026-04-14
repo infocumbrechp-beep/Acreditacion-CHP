@@ -1528,11 +1528,74 @@ body {
     bindEv('btn-reset-track', 'click', resetTracking);
   }
 
+  /* ── Detectar QR de conferencia en la URL ─────────────
+     Cuando el asistente escanea el QR de una sala,
+     la URL contiene ?track=1&cid=CONF-D2-01&cn=...&cd=...&ch=...
+     La app detecta esto, va directo a "Mi Asistencia"
+     y registra la conferencia automáticamente.
+  ───────────────────────────────────────────────────────── */
+  function procesarQRConferencia() {
+    var params = new URLSearchParams(window.location.search);
+    var isTrack = params.get('track');
+    if (isTrack !== '1') return;
+
+    var cid = params.get('cid') || '';
+    var cn  = decodeURIComponent(params.get('cn') || 'Conferencia');
+    var cd  = decodeURIComponent(params.get('cd') || '');
+    var ch  = decodeURIComponent(params.get('ch') || '');
+
+    if (!cid) return;
+
+    // Ir directo a la pestaña de tracking
+    showPage('tracking');
+
+    // Pequeño delay para que la UI esté lista
+    setTimeout(function() {
+      // Verificar duplicado
+      for (var i = 0; i < confsAsistidas.length; i++) {
+        if (confsAsistidas[i].id === cid) {
+          // Ya registrada — mostrar mensaje especial
+          var okDiv = document.getElementById('tracking-ok');
+          var areaDiv = document.getElementById('tracking-area');
+          document.getElementById('track-conf-name').textContent = cn + (cd ? ' · ' + cd : '') + (ch ? ' · ' + ch : '');
+          document.getElementById('track-count').textContent = confsAsistidas.length;
+          var pct2 = Math.min(100, (confsAsistidas.length/5)*100);
+          document.getElementById('track-bar').style.width = pct2 + '%';
+          document.getElementById('track-cert-hint').textContent = '⚠️ Ya habías registrado esta conferencia anteriormente';
+          okDiv.style.background = '#FEF5E7';
+          okDiv.style.border = '2px solid #D4700A';
+          okDiv.querySelector('.ts-icon').textContent = '⚠️';
+          okDiv.querySelector('h3').textContent = 'Ya estás registrado';
+          okDiv.querySelector('h3').style.color = '#D4700A';
+          okDiv.style.display = 'block';
+          areaDiv.style.display = 'none';
+          return;
+        }
+      }
+
+      // Nueva conferencia — registrar
+      var nombreCompleto = cn;
+      if (cd || ch) nombreCompleto += ' · ' + (cd || '') + (ch ? ' · ' + ch : '');
+      confsAsistidas.push({ id: cid, nombre: nombreCompleto });
+      actualizarTracking(nombreCompleto);
+
+      // Limpiar la URL sin recargar la página
+      // (para que si el asistente recarga no registre de nuevo)
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }, 300);
+  }
+
   // Init
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindAll);
+    document.addEventListener('DOMContentLoaded', function() {
+      bindAll();
+      procesarQRConferencia();
+    });
   } else {
     bindAll();
+    procesarQRConferencia();
   }
 
 })();
