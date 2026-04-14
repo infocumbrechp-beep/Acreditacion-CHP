@@ -6,7 +6,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1A5276">
-<title>Cumbre CHP 2026</title>
+<meta property="og:title" content="Acreditación CHP 2026">
+<meta property="og:description" content="App oficial de la Cumbre Internacional para el Cuidado Avanzado de Heridas y Piel — 7, 8 y 9 de mayo 2026">
+<meta property="og:url" content="https://infocumbrechp-beep.github.io/Acreditacion-CHP/">
+<title>Acreditación CHP 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
@@ -1273,6 +1276,10 @@ body {
      En producción: esta data viene codificada en el QR
      Formato QR: chp://CHP-0001|María González|Enfermería|ENFERMERÍA|Día 1
   ───────────────────────────────────────────────────────── */
+  var APP_URL = 'https://infocumbrechp-beep.github.io/Acreditacion-CHP/';
+
+  /* Base de datos demo — en producción los datos vienen codificados en el QR
+     Formato real del QR: APP_URL + ?id=CHP-0001&n=Nombre&e=Especialidad&p=PASE&d=Días */
   var DEMO_DB = {
     'CHP-0001': { nombre:'María González', especialidad:'Enfermería', pase:'ENFERMERÍA', dias:'Día 1' },
     'CHP-0002': { nombre:'Dr. Carlos Medina', especialidad:'Cirugía Plástica', pase:'MÉDICO', dias:'Días 2 y 3' },
