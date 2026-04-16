@@ -680,6 +680,64 @@ body {
 .post-banner p { font-size:13px; color:var(--text-soft); margin-bottom:14px; }
 
 /* ═══════════════════════════════════════════
+   ── EVALUACIONES
+═══════════════════════════════════════════ */
+.eval-card {
+  background:#fff; border:1px solid var(--border); border-radius:12px;
+  margin:0 16px 10px; padding:14px; box-shadow:var(--shadow);
+}
+.eval-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.eval-meta { font-size:11px; color:var(--text-muted); margin-bottom:10px; }
+.eval-badge {
+  display:inline-block; padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800;
+  font-family:'Syne',sans-serif; letter-spacing:0.6px; text-transform:uppercase;
+}
+.eval-badge.pending { background:var(--amber-bg); color:var(--amber); }
+.eval-badge.done { background:var(--green-bg); color:var(--green); }
+.eval-btn {
+  margin-top:10px; background:var(--teal); color:#fff; border:none; border-radius:10px;
+  padding:10px 14px; font-family:'Syne',sans-serif; font-size:12px; font-weight:700; cursor:pointer;
+}
+.eval-btn.secondary { background:#fff; color:var(--teal); border:1.5px solid var(--teal); }
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(11,30,53,0.55); display:none;
+  align-items:center; justify-content:center; z-index:9999; padding:18px;
+}
+.modal-card {
+  width:100%; max-width:420px; background:#fff; border-radius:18px;
+  box-shadow:var(--shadow-lg); overflow:hidden; max-height:90vh; overflow-y:auto;
+}
+.modal-head {
+  background:linear-gradient(160deg, #1A4F7A 0%, #1F618D 100%);
+  padding:18px 18px 16px; color:#fff;
+}
+.modal-head h3 { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; margin-bottom:4px; }
+.modal-head p { font-size:12px; color:rgba(255,255,255,0.75); }
+.modal-body { padding:18px; }
+.modal-label { display:block; font-size:12px; color:var(--text-soft); margin-bottom:6px; font-weight:600; margin-top:10px; }
+.modal-textarea {
+  width:100%; border:1.5px solid var(--border); border-radius:12px;
+  padding:12px 14px; font-family:'DM Sans',sans-serif; font-size:14px; outline:none;
+}
+.modal-textarea:focus { border-color:var(--blue); }
+.score-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:6px;
+}
+.score-btn {
+  border:1.5px solid var(--border); background:#fff; color:var(--text);
+  border-radius:10px; padding:10px 0;
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:800; cursor:pointer;
+}
+.score-btn.active { background:var(--teal); border-color:var(--teal); color:#fff; }
+.modal-actions { display:flex; gap:10px; margin-top:14px; }
+.modal-actions button {
+  flex:1; border:none; border-radius:12px; padding:12px;
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:800; cursor:pointer;
+}
+.modal-cancel { background:#EEF4FA; color:var(--text-soft); }
+.modal-save { background:var(--teal); color:#fff; }
+
+/* ═══════════════════════════════════════════
    ── TRACKING QR (asistente escanea sala)
 ═══════════════════════════════════════════ */
 .tracking-success {
@@ -1183,6 +1241,14 @@ body {
         Aún no tienes conferencias registradas.<br>Escanea el QR de cada sala para comenzar.
       </div>
     </div>
+
+    <div class="section-label">Evaluaciones de ponencias</div>
+    <div id="pending-evals-list">
+      <div style="margin:0 16px 20px;text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">
+        Cuando finalice una ponencia que registraste, podrás evaluarla aquí.
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1199,6 +1265,14 @@ body {
   <div class="info-banner">
     <h3>⚠️ Cupos limitados</h3>
     <p>Inscríbete con anticipación para garantizar tu lugar en los talleres.</p>
+  </div>
+
+  <div class="section-label">Evaluación del evento</div>
+  <div class="eval-card">
+    <div class="eval-title">Comparte tu experiencia general</div>
+    <div class="eval-meta">Sala · Sonido · Atención · Networking · Calidad académica</div>
+    <span class="eval-badge pending" id="event-eval-badge">Pendiente</span>
+    <div><button class="eval-btn" id="btn-open-event-eval">Evaluar evento completo</button></div>
   </div>
 
   <div class="workshop-card">
@@ -1267,35 +1341,172 @@ body {
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════
+     MODALES DE EVALUACIÓN
+═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-ponencia-eval">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Evaluar ponencia</h3>
+      <p id="modal-ponencia-sub">Tu respuesta es totalmente anónima.</p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label">Ponencia</div>
+      <div id="modal-ponencia-name" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;">—</div>
+      <div class="modal-label">Califica del 1 al 10</div>
+      <div class="score-grid" id="score-grid-ponencia"></div>
+      <div class="modal-label">Comentario opcional</div>
+      <textarea id="ponencia-comment" class="modal-textarea" rows="3" placeholder="¿Qué te pareció esta ponencia?"></textarea>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="btn-cancel-ponencia-eval">Cancelar</button>
+        <button class="modal-save" id="btn-save-ponencia-eval">Enviar evaluación</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-event-eval">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Evaluación general del evento</h3>
+      <p>Tu respuesta es totalmente anónima.</p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label">Sala</div><div class="score-grid" id="score-grid-sala"></div>
+      <div class="modal-label">Sonido</div><div class="score-grid" id="score-grid-sonido"></div>
+      <div class="modal-label">Atención del staff</div><div class="score-grid" id="score-grid-atencion"></div>
+      <div class="modal-label">Networking</div><div class="score-grid" id="score-grid-networking"></div>
+      <div class="modal-label">Calidad académica</div><div class="score-grid" id="score-grid-academica"></div>
+      <div class="modal-label">Comentario opcional</div>
+      <textarea id="event-comment" class="modal-textarea" rows="3" placeholder="¿Qué mejorarías o destacarías?"></textarea>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="btn-cancel-event-eval">Cancelar</button>
+        <button class="modal-save" id="btn-save-event-eval">Enviar evaluación</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      JAVASCRIPT — compatible WhatsApp WebView
 ═══════════════════════════════════════════════════════ -->
 <script>
 (function() {
 
-  /* ── Base de datos de asistentes (demo) ────────────────
-     En producción: esta data viene codificada en el QR
-     Formato QR: chp://CHP-0001|María González|Enfermería|ENFERMERÍA|Día 1
-  ───────────────────────────────────────────────────────── */
-  var APP_URL = 'https://infocumbrechp-beep.github.io/Acreditacion-CHP/';
+  /* ══════════════════════════════════════════════════════
+     CONFIGURACIÓN — CAMBIAR ANTES DEL EVENTO
+     Pegar aquí la URL del Google Apps Script web app
+  ══════════════════════════════════════════════════════ */
+  var GOOGLE_SHEET_URL = ''; // ← PEGAR AQUÍ LA URL DEL APPS SCRIPT
 
-  /* Base de datos demo — en producción los datos vienen codificados en el QR
-     Formato real del QR: APP_URL + ?id=CHP-0001&n=Nombre&e=Especialidad&p=PASE&d=Días */
+  var APP_URL = 'https://infocumbrechp-beep.github.io/Acreditacion-CHP/';
+  var HOY_AUTO = (function() {
+    var d = new Date();
+    var y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate();
+    if (y === 2026 && m === 5 && day === 7) return 'Día 1';
+    if (y === 2026 && m === 5 && day === 8) return 'Día 2';
+    if (y === 2026 && m === 5 && day === 9) return 'Día 3';
+    return 'Día 2'; // demo fallback
+  })();
+
+  /* ── Base de datos demo ── */
   var DEMO_DB = {
     'CHP-0001': { nombre:'María González', especialidad:'Enfermería', pase:'ENFERMERÍA', dias:'Día 1' },
     'CHP-0002': { nombre:'Dr. Carlos Medina', especialidad:'Cirugía Plástica', pase:'MÉDICO', dias:'Días 2 y 3' },
     'CHP-0003': { nombre:'Dra. Ana Flores', especialidad:'Dermatología', pase:'VIP', dias:'Días 1, 2 y 3' }
   };
 
-  // Día actual del evento (en producción: calcular por fecha real)
-  var HOY = 'Día 2'; // Simula que hoy es el Día 2
+  /* ── Horario completo de conferencias ── */
+  var CONF_SCHEDULE = {
+    'CONF-D1-01':{ nombre:'Palabras de Bienvenida',                       fecha:'2026-05-07', hora:'09:00', dia:'Día 1' },
+    'CONF-D1-02':{ nombre:'Asepsia y Antisepsia',                         fecha:'2026-05-07', hora:'09:15', dia:'Día 1' },
+    'CONF-D1-03':{ nombre:'Epigenética y Nutrición Celular',              fecha:'2026-05-07', hora:'09:35', dia:'Día 1' },
+    'CONF-D1-04':{ nombre:'De la Teoría a la Práctica: Cuidado Avanzado', fecha:'2026-05-07', hora:'09:55', dia:'Día 1' },
+    'CONF-D1-05':{ nombre:'Manejo Enfermería Pre/Post Cámara Hiperbárica',fecha:'2026-05-07', hora:'10:15', dia:'Día 1' },
+    'CONF-D1-06':{ nombre:'Inteligencia Emocional y Cuidado Humanizado',  fecha:'2026-05-07', hora:'11:05', dia:'Día 1' },
+    'CONF-D1-07':{ nombre:'Telemedicina y Monitorización Remota',         fecha:'2026-05-07', hora:'11:25', dia:'Día 1' },
+    'CONF-D1-08':{ nombre:'Educación para el Cuidador',                   fecha:'2026-05-07', hora:'11:45', dia:'Día 1' },
+    'CONF-D1-09':{ nombre:'Cómo Manejar la Herida en la Consulta',       fecha:'2026-05-07', hora:'13:05', dia:'Día 1' },
+    'CONF-D1-10':{ nombre:'Innovación Matrices de Colágeno',              fecha:'2026-05-07', hora:'15:25', dia:'Día 1' },
+    'CONF-D2-01':{ nombre:'Heridas Agudas y Crónicas',                    fecha:'2026-05-08', hora:'09:15', dia:'Día 2' },
+    'CONF-D2-02':{ nombre:'Sanando Piel, Restaurando Vida',               fecha:'2026-05-08', hora:'09:35', dia:'Día 2' },
+    'CONF-D2-03':{ nombre:'Quemaduras y sus Diferentes Aspectos',         fecha:'2026-05-08', hora:'09:55', dia:'Día 2' },
+    'CONF-D2-04':{ nombre:'Nuevos Materiales para el Cuidado de Heridas', fecha:'2026-05-08', hora:'10:15', dia:'Día 2' },
+    'CONF-D2-05':{ nombre:'Nanotecnología en el Manejo de Heridas',       fecha:'2026-05-08', hora:'11:05', dia:'Día 2' },
+    'CONF-D2-06':{ nombre:'Prevención de Infecciones Nosocomiales',       fecha:'2026-05-08', hora:'11:25', dia:'Día 2' },
+    'CONF-D2-07':{ nombre:'Protocolo en el Cuidado Avanzado de Heridas',  fecha:'2026-05-08', hora:'11:45', dia:'Día 2' },
+    'CONF-D2-08':{ nombre:'Microbiología',                                fecha:'2026-05-08', hora:'13:25', dia:'Día 2' },
+    'CONF-D2-09':{ nombre:'Micobacterias',                                fecha:'2026-05-08', hora:'13:45', dia:'Día 2' },
+    'CONF-D2-10':{ nombre:'Heridas en Enfermedades Autoinmunes',          fecha:'2026-05-08', hora:'14:05', dia:'Día 2' },
+    'CONF-D2-11':{ nombre:'Pie Diabético Post Cateterismo',               fecha:'2026-05-08', hora:'14:25', dia:'Día 2' },
+    'CONF-D2-12':{ nombre:'Cicatrización con Tecnología Fotónica',        fecha:'2026-05-08', hora:'15:05', dia:'Día 2' },
+    'CONF-D2-13':{ nombre:'Beneficios de la Cámara Hiperbárica',          fecha:'2026-05-08', hora:'15:45', dia:'Día 2' },
+    'CONF-D3-01':{ nombre:'Nutrición Clínica Avanzada en Heridas',        fecha:'2026-05-09', hora:'09:05', dia:'Día 3' },
+    'CONF-D3-02':{ nombre:'Compuesto Antimicrobiano en Heridas Crónicas', fecha:'2026-05-09', hora:'09:25', dia:'Día 3' },
+    'CONF-D3-03':{ nombre:'Infección del Sitio Quirúrgico',               fecha:'2026-05-09', hora:'09:45', dia:'Día 3' },
+    'CONF-D3-04':{ nombre:'Manejos de Heridas Complejas',                 fecha:'2026-05-09', hora:'10:05', dia:'Día 3' },
+    'CONF-D3-05':{ nombre:'Manejo del Dolor',                             fecha:'2026-05-09', hora:'10:55', dia:'Día 3' },
+    'CONF-D3-06':{ nombre:'Exposición Ósea Compleja: Algoritmos',         fecha:'2026-05-09', hora:'11:15', dia:'Día 3' },
+    'CONF-D3-07':{ nombre:'Cronificación de la Herida Traumática',        fecha:'2026-05-09', hora:'12:55', dia:'Día 3' },
+    'CONF-D3-08':{ nombre:'Úlcera Venosa: Limpieza, Injerto, PRF',       fecha:'2026-05-09', hora:'13:15', dia:'Día 3' },
+    'CONF-D3-09':{ nombre:'Patología de la Belleza',                      fecha:'2026-05-09', hora:'14:25', dia:'Día 3' },
+    'CONF-D3-10':{ nombre:'Mesa Redonda y Consenso de Protocolo',         fecha:'2026-05-09', hora:'15:05', dia:'Día 3' }
+  };
 
-  // Contadores de acreditación
+  var CERT_MIN = 5;
+  var VALID_BEFORE_MIN = 10;
+  var VALID_AFTER_MIN = 35;
+
+  /* ── Estado local ── */
   var counters = { total:0, enf:0, med:0, vip:0 };
+  var confsAsistidas = loadTracking();
+  var evaluacionesPonencias = loadJsonArray('chp_eval_ponencias_v1');
+  var evaluacionEvento = loadJsonObject('chp_eval_evento_v1');
+  var currentEvalConfId = null;
+  var selectedPonenciaScore = null;
 
-  // Tracking de conferencias asistidas
-  var confsAsistidas = [];
+  /* ══════════════════════════════════════════════════════
+     GOOGLE SHEETS — envío silencioso de datos
+  ══════════════════════════════════════════════════════ */
+  function enviarASheets(tipo, datos) {
+    if (!GOOGLE_SHEET_URL) return; // sin URL configurada, saltar silenciosamente
+    try {
+      var payload = Object.assign({ tipo: tipo, timestamp: new Date().toLocaleString('es-VE') }, datos);
+      fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(function(){});
+    } catch(e) {}
+  }
 
-  /* ── Navegación entre páginas ──────────────────────── */
+  /* ══════════════════════════════════════════════════════
+     ALMACENAMIENTO LOCAL
+  ══════════════════════════════════════════════════════ */
+  function loadTracking() {
+    try { var r = localStorage.getItem('chp_tracking_v2'); return r ? JSON.parse(r) : []; } catch(e) { return []; }
+  }
+  function saveTracking() {
+    try { localStorage.setItem('chp_tracking_v2', JSON.stringify(confsAsistidas)); } catch(e) {}
+  }
+  function loadJsonArray(key) {
+    try { var r = localStorage.getItem(key); return r ? JSON.parse(r) : []; } catch(e) { return []; }
+  }
+  function loadJsonObject(key) {
+    try { var r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+  }
+  function saveJsonArray(key, arr) {
+    try { localStorage.setItem(key, JSON.stringify(arr)); } catch(e) {}
+  }
+  function saveJsonObject(key, obj) {
+    try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {}
+  }
+  function savePonenciaEvals() { saveJsonArray('chp_eval_ponencias_v1', evaluacionesPonencias); }
+  function saveEventEval() { saveJsonObject('chp_eval_evento_v1', evaluacionEvento); }
+
+  /* ══════════════════════════════════════════════════════
+     NAVEGACIÓN
+  ══════════════════════════════════════════════════════ */
   function showPage(pageId) {
     var pages = document.querySelectorAll('.page');
     for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
@@ -1307,8 +1518,6 @@ body {
     if (activeNav) activeNav.classList.add('active');
     window.scrollTo(0, 0);
   }
-
-  /* ── Navegación pestañas días ──────────────────────── */
   function showDay(dayId) {
     var days = document.querySelectorAll('.program-day');
     for (var i = 0; i < days.length; i++) days[i].classList.remove('active');
@@ -1320,62 +1529,72 @@ body {
     if (t) t.classList.add('active');
   }
 
-  /* ── Acreditación: validar asistente ──────────────── */
-  function validarAsistente(id) {
-    id = id.trim().toUpperCase();
+  /* ══════════════════════════════════════════════════════
+     ACREDITACIÓN STAFF
+  ══════════════════════════════════════════════════════ */
+  function validarAsistente(rawId) {
+    var id = rawId.trim().toUpperCase();
+    // Detectar si viene del QR codificado en URL
+    var nombre = '', especialidad = '', pase = '', dias = '';
+    if (id.indexOf('?') !== -1 || id.indexOf('&') !== -1) {
+      try {
+        var url = id.indexOf('http') === 0 ? id : 'https://x.com/?' + id.split('?')[1];
+        var p = new URLSearchParams(url.split('?')[1] || id);
+        id = (p.get('id') || id).toUpperCase();
+        nombre = decodeURIComponent(p.get('n') || '');
+        especialidad = decodeURIComponent(p.get('e') || '');
+        pase = decodeURIComponent(p.get('p') || '');
+        dias = decodeURIComponent(p.get('d') || '');
+      } catch(e) {}
+    }
+    var data = DEMO_DB[id];
+    if (!data && nombre) {
+      data = { nombre: nombre, especialidad: especialidad, pase: pase, dias: dias };
+    }
     var now = new Date();
     var timeStr = now.getHours() + ':' + (now.getMinutes()<10?'0':'') + now.getMinutes() + ' — ' + now.toLocaleDateString('es-VE');
-
-    // Ocultar todos los resultados
     document.getElementById('result-valid').style.display = 'none';
     document.getElementById('result-wrong').style.display = 'none';
     document.getElementById('result-invalid').style.display = 'none';
     document.getElementById('scanner-area').style.display = 'none';
-
-    var data = DEMO_DB[id];
-
     if (!data) {
-      // INVÁLIDO
       document.getElementById('res-time-i').textContent = timeStr;
       document.getElementById('result-invalid').style.display = 'block';
       return;
     }
-
-    // Verificar día
-    var autorizado = data.dias.indexOf(HOY) !== -1 || data.dias === 'Días 1, 2 y 3';
-
+    var autorizado = data.dias.indexOf(HOY_AUTO) !== -1 || data.dias === 'Días 1, 2 y 3';
     if (autorizado) {
-      // VÁLIDO — verde
       document.getElementById('res-name').textContent = data.nombre;
       document.getElementById('res-spec').textContent = data.especialidad;
       document.getElementById('res-pase').textContent = '🎫 ' + data.pase;
       document.getElementById('res-days').textContent = '✅ Autorizado: ' + data.dias;
       document.getElementById('res-time').textContent = timeStr;
       document.getElementById('result-valid').style.display = 'block';
-      // Actualizar contadores
       counters.total++;
       if (data.pase === 'ENFERMERÍA') counters.enf++;
       else if (data.pase === 'MÉDICO') counters.med++;
       else if (data.pase === 'VIP') counters.vip++;
       actualizarContadores();
+      // Enviar a Google Sheets
+      enviarASheets('asistencia', {
+        id_asistente: id, nombre: data.nombre, especialidad: data.especialidad,
+        tipo_pase: data.pase, dias_autorizados: data.dias, dia_evento: HOY_AUTO
+      });
     } else {
-      // DÍA INCORRECTO — amarillo
       document.getElementById('res-name-w').textContent = data.nombre;
-      document.getElementById('res-detail-w').textContent = 'Hoy es ' + HOY + '. Este pase es válido para: ' + data.dias;
+      document.getElementById('res-detail-w').textContent = 'Hoy es ' + HOY_AUTO + '. Este pase es válido para: ' + data.dias;
       document.getElementById('res-pase-w').textContent = '🎫 ' + data.pase;
       document.getElementById('res-days-w').textContent = '📅 Pase válido: ' + data.dias;
       document.getElementById('res-time-w').textContent = timeStr;
       document.getElementById('result-wrong').style.display = 'block';
     }
   }
-
   function actualizarContadores() {
     document.getElementById('stat-total').textContent = counters.total;
     document.getElementById('stat-enf').textContent = counters.enf;
     document.getElementById('stat-med').textContent = counters.med;
     document.getElementById('stat-vip').textContent = counters.vip;
   }
-
   function resetAcred() {
     document.getElementById('result-valid').style.display = 'none';
     document.getElementById('result-wrong').style.display = 'none';
@@ -1384,218 +1603,343 @@ body {
     document.getElementById('manual-id').value = '';
   }
 
-  /* ── Tracking de conferencias ──────────────────────── */
-  var DEMO_CONFS = [
-    { id:'CONF-D2-01', nombre:'Heridas Agudas y Crónicas: Diferencias y Tratamiento', dia:'Día 2' },
-    { id:'CONF-D2-02', nombre:'Sanando Piel, Restaurando Vida', dia:'Día 2' },
-    { id:'CONF-D2-03', nombre:'Quemaduras y sus Diferentes Aspectos', dia:'Día 2' },
-    { id:'CONF-D2-04', nombre:'Investigación e Innovación en el Cuidado de Heridas', dia:'Día 2' },
-    { id:'CONF-D2-05', nombre:'Nanotecnología en el Manejo Avanzado de Heridas', dia:'Día 2' }
-  ];
-  var demoConfIdx = 0;
-
-  function registrarConferencia(confId, confNombre) {
-    // Verificar duplicado
-    for (var i = 0; i < confsAsistidas.length; i++) {
-      if (confsAsistidas[i].id === confId) {
-        alert('Ya registraste esta conferencia.');
-        return;
+  /* ══════════════════════════════════════════════════════
+     TRACKING DE CONFERENCIAS
+  ══════════════════════════════════════════════════════ */
+  function parseDT(dateStr, timeStr) {
+    var d = dateStr.split('-'), t = timeStr.split(':');
+    return new Date(+d[0], +d[1]-1, +d[2], +t[0], +t[1], 0, 0);
+  }
+  function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function conferenceExists(id) { return !!CONF_SCHEDULE[id]; }
+  function alreadyRegistered(id) {
+    for (var i = 0; i < confsAsistidas.length; i++) if (confsAsistidas[i].id === id) return true;
+    return false;
+  }
+  function getConferenceEnd(confId) {
+    var conf = CONF_SCHEDULE[confId];
+    if (!conf) return null;
+    var sameDay = [];
+    for (var key in CONF_SCHEDULE) {
+      if (CONF_SCHEDULE[key].fecha === conf.fecha) {
+        sameDay.push({ id:key, dt:parseDT(CONF_SCHEDULE[key].fecha, CONF_SCHEDULE[key].hora) });
       }
     }
-    confsAsistidas.push({ id: confId, nombre: confNombre });
-    actualizarTracking(confNombre);
+    sameDay.sort(function(a,b){ return a.dt - b.dt; });
+    for (var i = 0; i < sameDay.length; i++) {
+      if (sameDay[i].id === confId) {
+        return i < sameDay.length-1
+          ? new Date(sameDay[i+1].dt.getTime())
+          : new Date(sameDay[i].dt.getTime() + 45*60000);
+      }
+    }
+    return null;
   }
-
-  function actualizarTracking(ultimaConf) {
-    var n = confsAsistidas.length;
-    var pct = Math.min(100, (n/5)*100);
-
-    // Mostrar éxito
-    document.getElementById('track-conf-name').textContent = ultimaConf;
-    document.getElementById('track-count').textContent = n;
+  function validateConferenceWindow(confId) {
+    var conf = CONF_SCHEDULE[confId];
+    if (!conf) return { ok:false, type:'error', message:'Esta conferencia no existe.' };
+    var now = new Date();
+    var confAt = parseDT(conf.fecha, conf.hora);
+    var openAt = new Date(confAt.getTime() - VALID_BEFORE_MIN*60000);
+    var closeAt = new Date(confAt.getTime() + VALID_AFTER_MIN*60000);
+    if (now < openAt) return { ok:false, type:'warn', message:'Aún no está habilitado. Se activa ' + VALID_BEFORE_MIN + ' min antes.' };
+    if (now > closeAt) return { ok:false, type:'warn', message:'La ventana de registro de esta conferencia ya cerró.' };
+    return { ok:true, conf:conf };
+  }
+  function showTrackingMessage(title, textMsg, type) {
+    var okDiv = document.getElementById('tracking-ok');
+    var areaDiv = document.getElementById('tracking-area');
+    var icon = okDiv.querySelector('.ts-icon');
+    var titleEl = okDiv.querySelector('h3');
+    document.getElementById('track-conf-name').textContent = textMsg;
+    document.getElementById('track-count').textContent = confsAsistidas.length;
+    var pct = Math.min(100, (confsAsistidas.length/CERT_MIN)*100);
     document.getElementById('track-bar').style.width = pct + '%';
-    var hint = n >= 5
+    document.getElementById('track-cert-hint').textContent = confsAsistidas.length >= CERT_MIN
       ? '🎓 ¡Ya tienes tu certificado asegurado!'
-      : 'Faltan ' + (5-n) + ' conferencias para el certificado';
-    document.getElementById('track-cert-hint').textContent = hint;
-    document.getElementById('tracking-ok').style.display = 'block';
-    document.getElementById('tracking-area').style.display = 'none';
-
-    // Actualizar progreso
-    document.getElementById('prog-count').textContent = n;
-    document.getElementById('prog-bar').style.width = pct + '%';
-    document.getElementById('prog-label').textContent = n + ' de 5 para el certificado';
-
-    // Lista de conferencias
-    var list = document.getElementById('registered-list');
-    list.innerHTML = '';
-    for (var i = 0; i < confsAsistidas.length; i++) {
-      var item = document.createElement('div');
-      item.style.cssText = 'background:#fff;border:1px solid #D0E4F4;border-radius:12px;margin:0 16px 8px;padding:12px 14px;display:flex;align-items:center;gap:10px;';
-      item.innerHTML = '<span style="color:var(--teal);font-size:18px;">✅</span><span style="font-size:13px;color:var(--text);">' + confsAsistidas[i].nombre + '</span>';
-      list.appendChild(item);
+      : 'Faltan ' + (CERT_MIN - confsAsistidas.length) + ' conferencias para el certificado';
+    if (type === 'ok') { okDiv.style.background='var(--green-bg)'; okDiv.style.border='2px solid var(--green)'; icon.textContent='✅'; titleEl.textContent=title; titleEl.style.color='var(--green)'; }
+    else if (type === 'warn') { okDiv.style.background='var(--amber-bg)'; okDiv.style.border='2px solid var(--amber)'; icon.textContent='⚠️'; titleEl.textContent=title; titleEl.style.color='var(--amber)'; }
+    else { okDiv.style.background='var(--rose-bg)'; okDiv.style.border='2px solid var(--rose)'; icon.textContent='❌'; titleEl.textContent=title; titleEl.style.color='var(--rose)'; }
+    okDiv.style.display = 'block';
+    areaDiv.style.display = 'none';
+  }
+  function registrarConferencia(confId) {
+    confId = (confId || '').trim().toUpperCase();
+    if (!conferenceExists(confId)) { showTrackingMessage('QR inválido', 'Esta conferencia no existe.', 'error'); updateProgressOnly(); return; }
+    if (alreadyRegistered(confId)) { showTrackingMessage('Ya está registrada', CONF_SCHEDULE[confId].nombre, 'warn'); updateProgressOnly(); return; }
+    var validation = validateConferenceWindow(confId);
+    if (!validation.ok) { showTrackingMessage('Registro no permitido', validation.message, validation.type); updateProgressOnly(); return; }
+    var conf = validation.conf;
+    var registro = { id:confId, nombre:conf.nombre, fecha:conf.fecha, hora:conf.hora, dia:conf.dia, registradaEn:new Date().toLocaleString('es-VE') };
+    confsAsistidas.push(registro);
+    saveTracking();
+    updateProgressOnly();
+    showTrackingMessage('¡Asistencia registrada!', conf.nombre, 'ok');
+    // Enviar a Google Sheets
+    enviarASheets('tracking', { id_conf:confId, nombre_conf:conf.nombre, dia:conf.dia, hora:conf.hora, dia_evento:HOY_AUTO });
+    // Timer para abrir evaluación al finalizar
+    var endAt = getConferenceEnd(confId);
+    if (endAt) {
+      var delay = Math.max(2000, endAt.getTime() - new Date().getTime());
+      setTimeout(function() {
+        if (!getPonenciaEval(confId)) { renderPendingEvaluations(); if (document.getElementById('page-tracking').classList.contains('active')) openPonenciaEval(confId); }
+      }, delay);
     }
   }
-
   function resetTracking() {
     document.getElementById('tracking-ok').style.display = 'none';
     document.getElementById('tracking-area').style.display = 'block';
   }
+  function updateProgressOnly() {
+    var n = confsAsistidas.length;
+    var pct = Math.min(100, (n/CERT_MIN)*100);
+    document.getElementById('prog-count').textContent = n;
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-label').textContent = n >= CERT_MIN ? (n + ' registradas · mínimo alcanzado') : (n + ' de ' + CERT_MIN + ' para el certificado');
+    renderRegisteredList();
+    renderPendingEvaluations();
+    updateEventEvalUI();
+  }
+  function renderRegisteredList() {
+    var list = document.getElementById('registered-list');
+    if (!list) return;
+    if (!confsAsistidas.length) {
+      list.innerHTML = '<div style="margin:0 16px 20px;text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">Aún no tienes conferencias registradas.<br>Escanea el QR de cada sala para comenzar.</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < confsAsistidas.length; i++) {
+      html += '<div style="background:#fff;border:1px solid #D0E4F4;border-radius:12px;margin:0 16px 8px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">' +
+        '<span style="color:var(--teal);font-size:18px;">✅</span>' +
+        '<div><div style="font-size:13px;color:var(--text);font-weight:600;">' + escapeHtml(confsAsistidas[i].nombre) + '</div>' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-top:3px;">' + escapeHtml(confsAsistidas[i].id) + ' · ' + escapeHtml(confsAsistidas[i].dia||'') + ' · ' + escapeHtml(confsAsistidas[i].hora||'') + '</div></div></div>';
+    }
+    list.innerHTML = html;
+  }
 
-  /* ── Bind event listeners ──────────────────────────── */
+  /* ══════════════════════════════════════════════════════
+     EVALUACIONES
+  ══════════════════════════════════════════════════════ */
+  function getPonenciaEval(confId) {
+    for (var i = 0; i < evaluacionesPonencias.length; i++) if (evaluacionesPonencias[i].id === confId) return evaluacionesPonencias[i];
+    return null;
+  }
+  function canEvaluateConference(confId) {
+    var endAt = getConferenceEnd(confId);
+    return endAt ? new Date() >= endAt : false;
+  }
+  function renderPendingEvaluations() {
+    var wrap = document.getElementById('pending-evals-list');
+    if (!wrap) return;
+    if (!confsAsistidas.length) {
+      wrap.innerHTML = '<div style="margin:0 16px 20px;text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">Cuando finalice una ponencia que registraste, podrás evaluarla aquí.</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < confsAsistidas.length; i++) {
+      var item = confsAsistidas[i];
+      var evalData = getPonenciaEval(item.id);
+      var enabled = canEvaluateConference(item.id);
+      var endAt = getConferenceEnd(item.id);
+      if (evalData) {
+        html += '<div class="eval-card"><div class="eval-title">' + escapeHtml(item.nombre) + '</div><div class="eval-meta">' + escapeHtml(item.id) + ' · Evaluada con ' + evalData.score + '/10</div><span class="eval-badge done">Evaluada ✓</span></div>';
+      } else if (enabled) {
+        html += '<div class="eval-card"><div class="eval-title">' + escapeHtml(item.nombre) + '</div><div class="eval-meta">Tu respuesta es anónima.</div><span class="eval-badge pending">Pendiente</span><div><button class="eval-btn" data-eval-conf="' + escapeHtml(item.id) + '">Evaluar ahora</button></div></div>';
+      } else {
+        html += '<div class="eval-card"><div class="eval-title">' + escapeHtml(item.nombre) + '</div><div class="eval-meta">Se habilita al finalizar la ponencia.</div><span class="eval-badge pending">Próximamente</span></div>';
+      }
+    }
+    wrap.innerHTML = html;
+    var btns = wrap.querySelectorAll('[data-eval-conf]');
+    for (var j = 0; j < btns.length; j++) {
+      (function(btn){ btn.addEventListener('click', function(){ openPonenciaEval(btn.getAttribute('data-eval-conf')); }); })(btns[j]);
+    }
+  }
+  function createScoreButtons(containerId, selectedValue) {
+    var wrap = document.getElementById(containerId);
+    if (!wrap) return;
+    var html = '';
+    for (var i = 1; i <= 10; i++) html += '<button type="button" class="score-btn' + (selectedValue === i ? ' active' : '') + '" data-score="' + i + '">' + i + '</button>';
+    wrap.innerHTML = html;
+  }
+  function bindScoreGroup(containerId, setter) {
+    var wrap = document.getElementById(containerId);
+    if (!wrap) return;
+    var btns = wrap.querySelectorAll('.score-btn');
+    for (var i = 0; i < btns.length; i++) {
+      (function(btn){
+        btn.addEventListener('click', function(){
+          setter(Number(btn.getAttribute('data-score')));
+          var siblings = wrap.querySelectorAll('.score-btn');
+          for (var k = 0; k < siblings.length; k++) siblings[k].classList.remove('active');
+          btn.classList.add('active');
+        });
+      })(btns[i]);
+    }
+  }
+  function openPonenciaEval(confId) {
+    var conf = CONF_SCHEDULE[confId];
+    if (!conf) return;
+    currentEvalConfId = confId;
+    selectedPonenciaScore = null;
+    document.getElementById('modal-ponencia-name').textContent = conf.nombre;
+    document.getElementById('ponencia-comment').value = '';
+    createScoreButtons('score-grid-ponencia', null);
+    bindScoreGroup('score-grid-ponencia', function(v){ selectedPonenciaScore = v; });
+    document.getElementById('modal-ponencia-eval').style.display = 'flex';
+  }
+  function closePonenciaEval() {
+    document.getElementById('modal-ponencia-eval').style.display = 'none';
+    currentEvalConfId = null; selectedPonenciaScore = null;
+  }
+  function savePonenciaEval() {
+    if (!currentEvalConfId) return;
+    if (!selectedPonenciaScore) { alert('Selecciona una calificación del 1 al 10.'); return; }
+    if (getPonenciaEval(currentEvalConfId)) { closePonenciaEval(); return; }
+    var eval_data = {
+      id: currentEvalConfId,
+      nombre: CONF_SCHEDULE[currentEvalConfId].nombre,
+      score: selectedPonenciaScore,
+      comentario: document.getElementById('ponencia-comment').value.trim(),
+      fecha: new Date().toLocaleString('es-VE')
+    };
+    evaluacionesPonencias.push(eval_data);
+    savePonenciaEvals();
+    // Enviar a Google Sheets
+    enviarASheets('evaluacion_ponencia', { id_ref:eval_data.id, nombre_ref:eval_data.nombre, score_general:eval_data.score, comentario:eval_data.comentario, dia_evento:HOY_AUTO });
+    closePonenciaEval();
+    renderPendingEvaluations();
+    alert('Gracias. Tu evaluación fue registrada de forma anónima.');
+  }
+  var eventScores = { sala:null, sonido:null, atencion:null, networking:null, academica:null };
+  function openEventEval() {
+    eventScores = { sala:null, sonido:null, atencion:null, networking:null, academica:null };
+    document.getElementById('event-comment').value = evaluacionEvento && evaluacionEvento.comentario ? evaluacionEvento.comentario : '';
+    createScoreButtons('score-grid-sala', evaluacionEvento ? Number(evaluacionEvento.sala) : null);
+    createScoreButtons('score-grid-sonido', evaluacionEvento ? Number(evaluacionEvento.sonido) : null);
+    createScoreButtons('score-grid-atencion', evaluacionEvento ? Number(evaluacionEvento.atencion) : null);
+    createScoreButtons('score-grid-networking', evaluacionEvento ? Number(evaluacionEvento.networking) : null);
+    createScoreButtons('score-grid-academica', evaluacionEvento ? Number(evaluacionEvento.academica) : null);
+    if (evaluacionEvento) {
+      eventScores.sala = Number(evaluacionEvento.sala);
+      eventScores.sonido = Number(evaluacionEvento.sonido);
+      eventScores.atencion = Number(evaluacionEvento.atencion);
+      eventScores.networking = Number(evaluacionEvento.networking);
+      eventScores.academica = Number(evaluacionEvento.academica);
+    }
+    bindScoreGroup('score-grid-sala', function(v){ eventScores.sala=v; });
+    bindScoreGroup('score-grid-sonido', function(v){ eventScores.sonido=v; });
+    bindScoreGroup('score-grid-atencion', function(v){ eventScores.atencion=v; });
+    bindScoreGroup('score-grid-networking', function(v){ eventScores.networking=v; });
+    bindScoreGroup('score-grid-academica', function(v){ eventScores.academica=v; });
+    document.getElementById('modal-event-eval').style.display = 'flex';
+  }
+  function closeEventEval() { document.getElementById('modal-event-eval').style.display = 'none'; }
+  function saveEventEvaluation() {
+    if (!eventScores.sala || !eventScores.sonido || !eventScores.atencion || !eventScores.networking || !eventScores.academica) {
+      alert('Completa todas las calificaciones del 1 al 10.'); return;
+    }
+    evaluacionEvento = {
+      sala:eventScores.sala, sonido:eventScores.sonido, atencion:eventScores.atencion,
+      networking:eventScores.networking, academica:eventScores.academica,
+      comentario:document.getElementById('event-comment').value.trim(),
+      fecha:new Date().toLocaleString('es-VE')
+    };
+    saveEventEval();
+    // Enviar a Google Sheets
+    enviarASheets('evaluacion_evento', {
+      tipo:'evento_completo', score_sala:evaluacionEvento.sala, score_sonido:evaluacionEvento.sonido,
+      score_atencion:evaluacionEvento.atencion, score_networking:evaluacionEvento.networking,
+      score_academica:evaluacionEvento.academica, comentario:evaluacionEvento.comentario, dia_evento:HOY_AUTO
+    });
+    updateEventEvalUI();
+    closeEventEval();
+    alert('Gracias. Tu evaluación general del evento fue registrada.');
+  }
+  function updateEventEvalUI() {
+    var badge = document.getElementById('event-eval-badge');
+    var btn = document.getElementById('btn-open-event-eval');
+    if (!badge || !btn) return;
+    if (evaluacionEvento) { badge.className='eval-badge done'; badge.textContent='Enviada ✓'; btn.textContent='Ver o editar evaluación'; }
+    else { badge.className='eval-badge pending'; badge.textContent='Pendiente'; btn.textContent='Evaluar evento completo'; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     DETECTAR QR DE CONFERENCIA EN LA URL
+     Acepta: ?track=1&cid=CONF-D2-01  O  ?conf=CONF-D2-01
+  ══════════════════════════════════════════════════════ */
+  function procesarQRConferencia() {
+    var params = new URLSearchParams(window.location.search);
+    var isTrack = params.get('track');
+    var cid = (params.get('cid') || params.get('conf') || params.get('c') || '').trim().toUpperCase();
+    if (!cid && !isTrack) return;
+    if (!cid) return;
+    showPage('tracking');
+    setTimeout(function() {
+      registrarConferencia(cid);
+      if (window.history && window.history.replaceState) window.history.replaceState({}, document.title, window.location.pathname);
+    }, 300);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     BIND EVENT LISTENERS
+  ══════════════════════════════════════════════════════ */
   function bindEv(id, ev, fn) {
     var el = document.getElementById(id);
     if (!el) return;
     el.addEventListener(ev, fn);
-    el.addEventListener('touchend', function(e) { e.preventDefault(); fn(e); });
+    el.addEventListener('touchend', function(e){ e.preventDefault(); fn(e); });
   }
-
   function bindAll() {
-    // Nav buttons
     var navBtns = document.querySelectorAll('.nav-btn');
     for (var i = 0; i < navBtns.length; i++) {
-      (function(btn) {
-        btn.addEventListener('click', function(e) { e.preventDefault(); showPage(btn.getAttribute('data-page')); });
-        btn.addEventListener('touchend', function(e) { e.preventDefault(); showPage(btn.getAttribute('data-page')); });
+      (function(btn){
+        btn.addEventListener('click', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
+        btn.addEventListener('touchend', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
       })(navBtns[i]);
     }
-
-    // Day tabs
     var dayTabs = document.querySelectorAll('.day-tab');
     for (var i = 0; i < dayTabs.length; i++) {
-      (function(tab) {
-        tab.addEventListener('click', function(e) { e.preventDefault(); showDay(tab.getAttribute('data-day')); });
-        tab.addEventListener('touchend', function(e) { e.preventDefault(); showDay(tab.getAttribute('data-day')); });
+      (function(tab){
+        tab.addEventListener('click', function(e){ e.preventDefault(); showDay(tab.getAttribute('data-day')); });
+        tab.addEventListener('touchend', function(e){ e.preventDefault(); showDay(tab.getAttribute('data-day')); });
       })(dayTabs[i]);
     }
-
-    // Quick buttons (inicio)
     var qBtns = document.querySelectorAll('.quick-btn');
     for (var i = 0; i < qBtns.length; i++) {
-      (function(btn) {
-        btn.addEventListener('click', function(e) { e.preventDefault(); showPage(btn.getAttribute('data-page')); });
-        btn.addEventListener('touchend', function(e) { e.preventDefault(); showPage(btn.getAttribute('data-page')); });
+      (function(btn){
+        btn.addEventListener('click', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
+        btn.addEventListener('touchend', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
       })(qBtns[i]);
     }
-
-    // Now card CTAs
     var goProg = document.getElementById('go-programa');
     var goMapa = document.getElementById('go-mapa');
-    if (goProg) {
-      goProg.addEventListener('click', function(e) { e.preventDefault(); showPage('programa'); });
-      goProg.addEventListener('touchend', function(e) { e.preventDefault(); showPage('programa'); });
-    }
-    if (goMapa) {
-      goMapa.addEventListener('click', function(e) { e.preventDefault(); showPage('mapa'); });
-      goMapa.addEventListener('touchend', function(e) { e.preventDefault(); showPage('mapa'); });
-    }
-
-    // Acreditación — botón escanear (demo: abre prompt)
-    bindEv('btn-scan', 'click', function() {
-      var id = prompt('DEMO: Ingresa ID del asistente\n(Prueba: CHP-0001, CHP-0002, CHP-0099)');
-      if (id) validarAsistente(id);
-    });
-
-    // Acreditación — búsqueda manual
-    bindEv('btn-search', 'click', function() {
-      var v = document.getElementById('manual-id').value;
-      if (v) validarAsistente(v);
-    });
+    if (goProg) { goProg.addEventListener('click', function(e){ e.preventDefault(); showPage('programa'); }); goProg.addEventListener('touchend', function(e){ e.preventDefault(); showPage('programa'); }); }
+    if (goMapa) { goMapa.addEventListener('click', function(e){ e.preventDefault(); showPage('mapa'); }); goMapa.addEventListener('touchend', function(e){ e.preventDefault(); showPage('mapa'); }); }
+    bindEv('btn-scan', 'click', function(){ var id = prompt('DEMO: Ingresa ID del asistente\n(Prueba: CHP-0001, CHP-0002, CHP-0099)'); if (id) validarAsistente(id); });
+    bindEv('btn-search', 'click', function(){ var v = document.getElementById('manual-id').value; if (v) validarAsistente(v); });
     var inp = document.getElementById('manual-id');
-    if (inp) {
-      inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { validarAsistente(inp.value); }
-      });
-    }
-
-    // Reset acred
+    if (inp) inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') validarAsistente(inp.value); });
     bindEv('btn-reset-valid', 'click', resetAcred);
     bindEv('btn-reset-wrong', 'click', resetAcred);
     bindEv('btn-reset-invalid', 'click', resetAcred);
-
-    // Tracking — escanear QR de sala (demo)
-    bindEv('btn-scan-track', 'click', function() {
-      if (demoConfIdx < DEMO_CONFS.length) {
-        var conf = DEMO_CONFS[demoConfIdx];
-        demoConfIdx++;
-        registrarConferencia(conf.id, conf.nombre);
-      } else {
-        alert('DEMO completado. En producción, el QR de cada sala contiene el ID de la conferencia.');
-      }
-    });
-
-    // Reset tracking
+    bindEv('btn-scan-track', 'click', function(){ var id = prompt('Ingresa el código de la conferencia\nEjemplo: CONF-D2-05'); if (id) registrarConferencia(id); });
     bindEv('btn-reset-track', 'click', resetTracking);
-  }
-
-  /* ── Detectar QR de conferencia en la URL ─────────────
-     Cuando el asistente escanea el QR de una sala,
-     la URL contiene ?track=1&cid=CONF-D2-01&cn=...&cd=...&ch=...
-     La app detecta esto, va directo a "Mi Asistencia"
-     y registra la conferencia automáticamente.
-  ───────────────────────────────────────────────────────── */
-  function procesarQRConferencia() {
-    var params = new URLSearchParams(window.location.search);
-    var isTrack = params.get('track');
-    if (isTrack !== '1') return;
-
-    var cid = params.get('cid') || '';
-    var cn  = decodeURIComponent(params.get('cn') || 'Conferencia');
-    var cd  = decodeURIComponent(params.get('cd') || '');
-    var ch  = decodeURIComponent(params.get('ch') || '');
-
-    if (!cid) return;
-
-    // Ir directo a la pestaña de tracking
-    showPage('tracking');
-
-    // Pequeño delay para que la UI esté lista
-    setTimeout(function() {
-      // Verificar duplicado
-      for (var i = 0; i < confsAsistidas.length; i++) {
-        if (confsAsistidas[i].id === cid) {
-          // Ya registrada — mostrar mensaje especial
-          var okDiv = document.getElementById('tracking-ok');
-          var areaDiv = document.getElementById('tracking-area');
-          document.getElementById('track-conf-name').textContent = cn + (cd ? ' · ' + cd : '') + (ch ? ' · ' + ch : '');
-          document.getElementById('track-count').textContent = confsAsistidas.length;
-          var pct2 = Math.min(100, (confsAsistidas.length/5)*100);
-          document.getElementById('track-bar').style.width = pct2 + '%';
-          document.getElementById('track-cert-hint').textContent = '⚠️ Ya habías registrado esta conferencia anteriormente';
-          okDiv.style.background = '#FEF5E7';
-          okDiv.style.border = '2px solid #D4700A';
-          okDiv.querySelector('.ts-icon').textContent = '⚠️';
-          okDiv.querySelector('h3').textContent = 'Ya estás registrado';
-          okDiv.querySelector('h3').style.color = '#D4700A';
-          okDiv.style.display = 'block';
-          areaDiv.style.display = 'none';
-          return;
-        }
-      }
-
-      // Nueva conferencia — registrar
-      var nombreCompleto = cn;
-      if (cd || ch) nombreCompleto += ' · ' + (cd || '') + (ch ? ' · ' + ch : '');
-      confsAsistidas.push({ id: cid, nombre: nombreCompleto });
-      actualizarTracking(nombreCompleto);
-
-      // Limpiar la URL sin recargar la página
-      // (para que si el asistente recarga no registre de nuevo)
-      if (window.history && window.history.replaceState) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }, 300);
+    bindEv('btn-open-event-eval', 'click', openEventEval);
+    bindEv('btn-cancel-ponencia-eval', 'click', closePonenciaEval);
+    bindEv('btn-save-ponencia-eval', 'click', savePonenciaEval);
+    bindEv('btn-cancel-event-eval', 'click', closeEventEval);
+    bindEv('btn-save-event-eval', 'click', saveEventEvaluation);
   }
 
   // Init
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      bindAll();
-      procesarQRConferencia();
-    });
+    document.addEventListener('DOMContentLoaded', function(){ bindAll(); updateProgressOnly(); procesarQRConferencia(); });
   } else {
-    bindAll();
-    procesarQRConferencia();
+    bindAll(); updateProgressOnly(); procesarQRConferencia();
   }
 
 })();
