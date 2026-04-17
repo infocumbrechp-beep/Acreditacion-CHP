@@ -1390,7 +1390,7 @@ body {
   <div style="color:#fff;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">Apunta al código QR</div>
   <div style="position:relative;width:280px;height:280px;border-radius:16px;overflow:hidden;">
     <video id="qr-video" style="width:100%;height:100%;object-fit:cover;" playsinline autoplay muted></video>
-    <canvas id="qr-canvas" style="display:none;"></canvas>
+    <canvas id="qr-canvas" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"></canvas>
     <div style="position:absolute;inset:0;border:3px solid #00E5FF;border-radius:16px;pointer-events:none;"></div>
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:2px solid rgba(0,229,255,0.5);border-radius:8px;pointer-events:none;"></div>
   </div>
@@ -1961,7 +1961,7 @@ body {
         video.srcObject = stream;
         video.onloadedmetadata = function() {
           video.play();
-          qrAnimFrame = setInterval(escanearFrame, 250);
+          qrAnimFrame = setInterval(escanearFrame, 100);
         };
       })
       .catch(function(err) {
@@ -1984,7 +1984,7 @@ body {
       var ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+      var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
       if (code && code.data) {
         cerrarCamara();
         procesarCodigoQR(code.data);
