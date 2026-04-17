@@ -413,7 +413,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <!-- PÁGINA 4 — MAPA -->
 <div class="page" id="page-mapa">
   <div class="page-header"><h2>🗺️ Mapa del Evento</h2><p>Salón Contemporáneo · C.C. Líder</p></div>
-  <div class="map-box"><div class="mi">🗺️</div><h3>Mapa del salón</h3><p>Se actualizará cuando el cliente confirme el salón.<br>Usa la guía de zonas abajo.</p></div>
+  <div style="margin:16px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);">
+    <img src="plano.jpg" alt="Plano del Salón Contemporáneo" style="width:100%;display:block;" onerror="this.parentElement.innerHTML='<div class=\'map-box\'><div class=\'mi\'>🗺️</div><h3>Plano del salón</h3><p>Sube el archivo <strong>plano.jpg</strong> al repositorio junto al index.html</p></div>'">
+  </div>
   <div class="section-label">Zonas del evento</div>
   <div class="zone-grid">
     <div class="zone-card"><div class="zi">🎤</div><div class="zn">Sala Conferencias</div><div class="zd">Tarima principal</div></div>
@@ -488,7 +490,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
 <!-- NAVEGACIÓN INFERIOR -->
 <nav class="nav">
-  <div class="nav-btn" data-page="acred"><div class="nav-icon">🔐</div><div class="nav-label">Staff</div></div>
   <div class="nav-btn active" data-page="inicio"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
   <div class="nav-btn" data-page="programa"><div class="nav-icon">📅</div><div class="nav-label">Programa</div></div>
   <div class="nav-btn" data-page="tracking"><div class="nav-icon">📲</div><div class="nav-label">Asistencia</div></div>
@@ -594,6 +595,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     var n = document.querySelector('.nav-btn[data-page="'+pageId+'"]');
     if (n) n.classList.add('active');
     window.scrollTo(0,0);
+    // Al entrar a tracking, siempre mostrar el área de escaneo limpia
+    if (pageId === 'tracking') {
+      var ok = document.getElementById('tracking-ok');
+      var area = document.getElementById('tracking-area');
+      if (ok) ok.style.display = 'none';
+      if (area) area.style.display = 'block';
+    }
   }
   function showDay(dayId) {
     document.querySelectorAll('.program-day').forEach(function(d){ d.classList.remove('active'); });
@@ -701,8 +709,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   }
 
   function resetTracking() {
-    document.getElementById('tracking-ok').style.display='none';
-    document.getElementById('tracking-area').style.display='block';
+    // Cerrar cámara si estuviera activa
+    if (html5QrCode && qrActivo) { cerrarCamara(); }
+    var ok = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    if (ok) ok.style.display = 'none';
+    if (area) area.style.display = 'block';
   }
 
   function updateProgress() {
