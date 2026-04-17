@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://infocumbrechp-beep.github.io/Acreditacion-CHP/">
 <title>Acreditación CHP 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="html5-qrcode.min.js" onerror="this.src='https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'"></script>
 <style>
 :root {
@@ -305,6 +306,55 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   margin-bottom:16px;
 }
 
+
+/* ── QR Personal del asistente ── */
+.mi-qr-page { background:var(--bg); }
+.mi-qr-hero {
+  background:linear-gradient(160deg,#1A4F7A 0%,#1F618D 100%);
+  padding:52px 24px 28px; text-align:center;
+}
+.mi-qr-hero h2 { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#fff; margin-bottom:4px; }
+.mi-qr-hero p { font-size:13px; color:rgba(255,255,255,0.7); }
+.qr-card {
+  background:#fff; border-radius:20px;
+  margin:20px 16px; padding:28px 20px;
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  text-align:center;
+}
+.qr-nombre {
+  font-family:'Syne',sans-serif;
+  font-size:20px; font-weight:800;
+  color:var(--text); margin-bottom:4px;
+}
+.qr-especialidad { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+#qr-canvas-personal {
+  border-radius:12px;
+  display:block; margin:0 auto 20px;
+  max-width:220px; width:100%;
+}
+.qr-dias-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  border-radius:100px; padding:10px 20px;
+  font-family:'Syne',sans-serif;
+  font-size:13px; font-weight:800;
+  margin-bottom:8px;
+}
+.qr-dias-badge.enf { background:#E8F5E9; color:#1A7A4A; }
+.qr-dias-badge.med { background:#EBF5FB; color:#1565C8; }
+.qr-instruccion {
+  font-size:12px; color:var(--text-muted);
+  line-height:1.6; margin-top:12px;
+}
+.qr-alerta-dia {
+  margin:16px; border-radius:14px;
+  padding:16px; text-align:center;
+  font-size:13px; font-weight:600;
+}
+.qr-alerta-dia.hoy { background:#E9F7EF; border:2px solid var(--green); color:var(--green); }
+.qr-alerta-dia.no-hoy { background:#FEF5E7; border:2px solid var(--amber); color:var(--amber); }
+.qr-alerta-dia.pendiente { background:var(--blue-light); border:2px solid var(--blue); color:var(--blue); }
+
 </style>
 </head>
 <body>
@@ -337,10 +387,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       <select class="reg-input" id="reg-especialidad">
         <option value="">Selecciona tu profesión...</option>
         <option value="Médico">Médico</option>
+        <option value="Estudiante">Estudiante de medicina</option>
         <option value="Enfermero/a">Enfermero/a</option>
-        <option value="Estudiante">Estudiante</option>
-        <option value="Patrocinador">Patrocinador</option>
-        <option value="Otro">Otro</option>
       </select>
     </div>
     <div id="reg-error" class="reg-error">⚠️ Por favor completa todos los campos obligatorios.</div>
@@ -640,6 +688,33 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   </div>
 </div>
 
+<!-- PÁGINA MI QR PERSONAL -->
+<div class="page mi-qr-page" id="page-miqr">
+  <div class="mi-qr-hero">
+    <h2>🎫 Mi Acreditación</h2>
+    <p>Muestra este código al staff en la entrada</p>
+  </div>
+
+  <!-- Alerta del día -->
+  <div id="qr-alerta-container"></div>
+
+  <!-- Tarjeta QR -->
+  <div class="qr-card">
+    <div class="qr-nombre" id="qr-nombre-display">—</div>
+    <div class="qr-especialidad" id="qr-prof-display">—</div>
+    <canvas id="qr-canvas-personal"></canvas>
+    <div id="qr-dias-badge-container"></div>
+    <p class="qr-instruccion">📱 Muestra esta pantalla al staff en la entrada.<br>No necesitas imprimirlo ni descargarlo.</p>
+  </div>
+
+  <!-- Botón editar datos -->
+  <div style="margin:0 16px 24px;text-align:center;">
+    <div onclick="editarDatosRegistro()" style="font-size:13px;color:var(--text-muted);cursor:pointer;padding:12px;">
+      ✏️ Editar mis datos
+    </div>
+  </div>
+</div>
+
 <!-- NAVEGACIÓN INFERIOR -->
 <nav class="nav">
   <div class="nav-btn active" data-page="inicio"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
@@ -675,6 +750,139 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   })();
 
 
+
+  /* ══════════════════════════════════════════════════════
+     LÓGICA DE DÍAS POR PROFESIÓN
+  ══════════════════════════════════════════════════════ */
+  function getDiasAutorizados(profesion) {
+    if (!profesion) return [];
+    var p = profesion.toLowerCase();
+    // Enfermero/a → solo Día 1
+    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1) {
+      return ['Día 1'];
+    }
+    // Médico y Estudiante → Días 2 y 3
+    return ['Día 2', 'Día 3'];
+  }
+
+  function puedeAsistirDia(profesion, dia) {
+    var dias = getDiasAutorizados(profesion);
+    return dias.indexOf(dia) !== -1;
+  }
+
+  function getLabelDias(profesion) {
+    var dias = getDiasAutorizados(profesion);
+    if (dias.length === 1) return '📅 Día 1 — Jueves 7 de mayo';
+    return '📅 Días 2 y 3 — Viernes 8 y Sábado 9 de mayo';
+  }
+
+  function getTipoPase(profesion) {
+    var p = (profesion || '').toLowerCase();
+    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1) return 'ENFERMERÍA';
+    if (p.indexOf('estudiante') !== -1) return 'ESTUDIANTE';
+    return 'MÉDICO';
+  }
+
+  /* ══════════════════════════════════════════════════════
+     GENERACIÓN DEL QR PERSONAL
+  ══════════════════════════════════════════════════════ */
+  var qrPersonalInstance = null;
+
+  function generarQRPersonal() {
+    if (!datosAsistente) return;
+
+    var dias = getDiasAutorizados(datosAsistente.especialidad);
+    var pase = getTipoPase(datosAsistente.especialidad);
+
+    // Datos codificados en el QR — formato URL para compatibilidad
+    var contenidoQR = window.location.origin + window.location.pathname +
+      '?id=' + encodeURIComponent(datosAsistente.id || datosAsistente.email) +
+      '&n=' + encodeURIComponent(datosAsistente.nombreCompleto) +
+      '&e=' + encodeURIComponent(datosAsistente.especialidad) +
+      '&p=' + encodeURIComponent(pase) +
+      '&d=' + encodeURIComponent(dias.join(', '));
+
+    // Actualizar textos
+    document.getElementById('qr-nombre-display').textContent = datosAsistente.nombreCompleto;
+    document.getElementById('qr-prof-display').textContent = datosAsistente.especialidad;
+
+    // Badge de días
+    var badgeContainer = document.getElementById('qr-dias-badge-container');
+    var esEnf = pase === 'ENFERMERÍA';
+    badgeContainer.innerHTML = '<div class="qr-dias-badge ' + (esEnf ? 'enf' : 'med') + '">' +
+      (esEnf ? '🏥 Día 1 — Jueves 7 de mayo' : '👨‍⚕️ Días 2 y 3 — Viernes 8 y Sábado 9 de mayo') +
+      '</div>';
+
+    // Alerta del día actual
+    var alertaContainer = document.getElementById('qr-alerta-container');
+    var hoy = new Date();
+    var y = hoy.getFullYear(), m = hoy.getMonth()+1, d = hoy.getDate();
+    var diaEvento = '';
+    if (y===2026 && m===5 && d===7) diaEvento = 'Día 1';
+    else if (y===2026 && m===5 && d===8) diaEvento = 'Día 2';
+    else if (y===2026 && m===5 && d===9) diaEvento = 'Día 3';
+
+    if (diaEvento) {
+      var autorizado = dias.indexOf(diaEvento) !== -1;
+      alertaContainer.innerHTML = '<div class="qr-alerta-dia ' + (autorizado ? 'hoy' : 'no-hoy') + '">' +
+        (autorizado
+          ? '✅ Hoy es tu día — Muestra este QR en la entrada'
+          : '⚠️ Hoy no corresponde a tu día de asistencia') +
+        '</div>';
+    } else {
+      // Antes del evento
+      var diasTexto = dias.join(' y ');
+      alertaContainer.innerHTML = '<div class="qr-alerta-dia pendiente">' +
+        '📅 Tu acceso es el ' + getLabelDias(datosAsistente.especialidad).replace('📅 ','') +
+        '</div>';
+    }
+
+    // Generar QR en canvas
+    var canvas = document.getElementById('qr-canvas-personal');
+    canvas.innerHTML = '';
+
+    // Destruir instancia anterior
+    if (qrPersonalInstance) {
+      try { qrPersonalInstance.clear(); } catch(e) {}
+      qrPersonalInstance = null;
+    }
+    canvas.parentNode.querySelectorAll('#qr-canvas-personal ~ *[id^="qr"]').forEach(function(el){ el.remove(); });
+
+    // Limpiar el div y crear el QR
+    var qrDiv = document.getElementById('qr-canvas-personal');
+    qrDiv.innerHTML = '';
+
+    try {
+      qrPersonalInstance = new QRCode(qrDiv, {
+        text: contenidoQR,
+        width: 220,
+        height: 220,
+        colorDark: '#12263A',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch(e) {
+      qrDiv.innerHTML = '<p style="color:var(--rose);font-size:13px;">Error al generar QR. Recarga la app.</p>';
+    }
+  }
+
+  function editarDatosRegistro() {
+    if (!confirm('¿Deseas editar tus datos? Tendrás que volver a completar el formulario.')) return;
+    try { localStorage.removeItem('chp_asistente_v1'); } catch(e) {}
+    datosAsistente = null;
+    // Limpiar formulario
+    ['reg-nombre','reg-apellido','reg-tel','reg-email'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    var sel = document.getElementById('reg-especialidad');
+    if (sel) sel.value = '';
+    // Mostrar registro
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('page-registro').classList.add('active');
+  }
+
+
   /* ══════════════════════════════════════════════════════
      REGISTRO DEL ASISTENTE
   ══════════════════════════════════════════════════════ */
@@ -694,9 +902,10 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function iniciarApp() {
     datosAsistente = cargarDatosAsistente();
     if (datosAsistente && datosAsistente.nombre && datosAsistente.email) {
-      // Ya registrado — ir directo a inicio
+      // Ya registrado — ir directo a Mi QR
       document.getElementById('page-registro').classList.remove('active');
-      showPageDirect('inicio');
+      showPageDirect('miqr');
+      setTimeout(function(){ generarQRPersonal(); filtrarProgramaPorProfesion(); }, 150);
     } else {
       // Mostrar formulario
       document.getElementById('page-registro').classList.add('active');
@@ -713,6 +922,9 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     if (n) n.classList.add('active');
     window.scrollTo(0,0);
     forceResetTracking();
+    if (pageId === 'miqr' && datosAsistente) {
+      setTimeout(generarQRPersonal, 100);
+    }
   }
 
   function validarYGuardarRegistro() {
@@ -725,7 +937,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 
     if (!nombre || !apellido || !email || !esp) {
       errDiv.style.display = 'block';
-      errDiv.textContent = '⚠️ Nombre, Apellido, Email y Profesión son obligatorios.';
+      errDiv.textContent = '⚠️ Por favor completa todos los campos obligatorios.';
       return;
     }
     if (email.indexOf('@') === -1 || email.indexOf('.') === -1) {
@@ -735,13 +947,17 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     }
     errDiv.style.display = 'none';
 
+    // Generar ID único para el asistente
+    var uid = 'CHP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
     var datos = {
+      id: uid,
       nombre: nombre,
       apellido: apellido,
       nombreCompleto: nombre + ' ' + apellido,
       telefono: tel,
       email: email,
       especialidad: esp,
+      diasAutorizados: getDiasAutorizados(esp).join(', '),
       registradoEn: new Date().toLocaleString('es-VE')
     };
     guardarDatosAsistente(datos);
@@ -757,9 +973,10 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       especialidad: datos.especialidad
     });
 
-    // Ir a inicio
+    // Ir a Mi QR directamente
     document.getElementById('page-registro').classList.remove('active');
-    showPageDirect('inicio');
+    showPageDirect('miqr');
+    setTimeout(function(){ generarQRPersonal(); filtrarProgramaPorProfesion(); }, 100);
   }
 
 
@@ -838,6 +1055,10 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     window.scrollTo(0,0);
     // SIEMPRE resetear tracking al navegar a esa sección
     forceResetTracking();
+    // Regenerar QR al entrar a Mi QR
+    if (pageId === 'miqr' && datosAsistente) {
+      setTimeout(generarQRPersonal, 100);
+    }
   }
 
   function forceResetTracking() {
@@ -854,6 +1075,32 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     if (d) d.classList.add('active');
     var t = document.querySelector('.day-tab[data-day="'+dayId+'"]');
     if (t) t.classList.add('active');
+  }
+
+  function filtrarProgramaPorProfesion() {
+    if (!datosAsistente) return;
+    var dias = getDiasAutorizados(datosAsistente.especialidad);
+    var esEnf = dias.indexOf('Día 1') !== -1 && dias.length === 1;
+    var esMed = dias.indexOf('Día 2') !== -1;
+
+    // Mostrar/ocultar pestañas del día
+    var tab1 = document.querySelector('.day-tab[data-day="dia1"]');
+    var tab2 = document.querySelector('.day-tab[data-day="dia2"]');
+    var tab3 = document.querySelector('.day-tab[data-day="dia3"]');
+
+    if (esEnf) {
+      // Enfermero/a — solo Día 1
+      if (tab1) { tab1.style.display=''; tab1.classList.add('active'); }
+      if (tab2) tab2.style.display='none';
+      if (tab3) tab3.style.display='none';
+      showDay('dia1');
+    } else {
+      // Médico/Estudiante — Días 2 y 3
+      if (tab1) tab1.style.display='none';
+      if (tab2) { tab2.style.display=''; tab2.classList.add('active'); }
+      if (tab3) tab3.style.display='';
+      showDay('dia2');
+    }
   }
 
   /* ── Acreditación ── */
@@ -925,6 +1172,33 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function registrarConferencia(confId) {
     confId = (confId||'').trim().toUpperCase();
     var conf = CONF_SCHEDULE[confId];
+    // Validar que la conferencia corresponda al día autorizado
+    if (conf && datosAsistente) {
+      var diasAuth = getDiasAutorizados(datosAsistente.especialidad);
+      if (diasAuth.indexOf(conf.dia) === -1) {
+        // Día no autorizado — mostrar mensaje bloqueante
+        var trackOk = document.getElementById('tracking-ok');
+        var trackArea = document.getElementById('tracking-area');
+        var icon = trackOk.querySelector('.ts-icon');
+        var titleEl = document.getElementById('track-title');
+        var confNameEl = document.getElementById('track-conf-name');
+        icon.textContent = '🚫';
+        titleEl.textContent = 'Conferencia no disponible';
+        titleEl.style.color = 'var(--rose)';
+        confNameEl.textContent = 'Esta conferencia es del ' + conf.dia + ' y tu pase es para: ' + diasAuth.join(' y ');
+        trackOk.style.background = 'var(--rose-bg)';
+        trackOk.style.border = '2px solid var(--rose)';
+        document.getElementById('track-count').textContent = confsAsistidas.length;
+        document.getElementById('track-bar').style.width = Math.min(100,(confsAsistidas.length/CERT_MIN)*100)+'%';
+        document.getElementById('track-cert-hint').textContent = '';
+        trackOk.removeAttribute('style');
+        trackOk.style.display = 'block';
+        trackOk.style.background = 'var(--rose-bg)';
+        trackOk.style.border = '2px solid var(--rose)';
+        if (trackArea) trackArea.style.display = 'none';
+        return;
+      }
+    }
     var trackOk = document.getElementById('tracking-ok');
     var trackArea = document.getElementById('tracking-area');
     var titleEl = document.getElementById('track-title');
