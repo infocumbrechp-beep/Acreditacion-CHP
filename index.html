@@ -1974,6 +1974,10 @@ body {
   function escanearFrame() {
     var video = document.getElementById('qr-video');
     var canvas = document.getElementById('qr-canvas');
+    if (!window.jsQR) {
+      document.getElementById('qr-debug').textContent = 'ERROR: jsQR no cargó';
+      return;
+    }
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -1987,6 +1991,8 @@ body {
         return;
       }
     }
+    var dbg = document.getElementById('qr-debug');
+    if (dbg) dbg.textContent = 'Escaneando... estado:' + video.readyState;
     qrAnimFrame = requestAnimationFrame(escanearFrame);
   }
 
@@ -2034,6 +2040,7 @@ body {
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:2px solid rgba(0,229,255,0.5);border-radius:8px;pointer-events:none;"></div>
   </div>
   <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:12px;">Enfoca el QR dentro del recuadro</div>
+  <div id="qr-debug" style="color:#FFD700;font-size:11px;margin-top:6px;text-align:center;">Iniciando...</div>
   <div onclick="cerrarCamara()" style="margin-top:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:12px 32px;border-radius:100px;font-weight:600;cursor:pointer;">Cancelar</div>
 </div>
 </body>
