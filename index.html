@@ -1961,7 +1961,7 @@ body {
         video.srcObject = stream;
         video.onloadedmetadata = function() {
           video.play();
-          requestAnimationFrame(escanearFrame);
+          qrAnimFrame = setInterval(escanearFrame, 250);
         };
       })
       .catch(function(err) {
@@ -1993,12 +1993,12 @@ body {
     }
     var dbg = document.getElementById('qr-debug');
     if (dbg) dbg.textContent = 'Escaneando... estado:' + video.readyState;
-    qrAnimFrame = requestAnimationFrame(escanearFrame);
+    // loop continúa via setInterval
   }
 
   function cerrarCamara() {
     if (qrStream) { qrStream.getTracks().forEach(function(t){ t.stop(); }); qrStream = null; }
-    if (qrAnimFrame) { cancelAnimationFrame(qrAnimFrame); qrAnimFrame = null; }
+    if (qrAnimFrame) { clearInterval(qrAnimFrame); qrAnimFrame = null; }
     document.getElementById('qr-modal').style.display = 'none';
   }
   window.cerrarCamara = cerrarCamara;
@@ -2031,17 +2031,5 @@ body {
 
 })();
 </script>
-<div id="qr-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;flex-direction:column;align-items:center;justify-content:center;">
-  <div style="color:#fff;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">Apunta al código QR</div>
-  <div style="position:relative;width:280px;height:280px;border-radius:16px;overflow:hidden;">
-    <video id="qr-video" style="width:100%;height:100%;object-fit:cover;" playsinline autoplay muted></video>
-    <canvas id="qr-canvas" style="display:none;"></canvas>
-    <div style="position:absolute;inset:0;border:3px solid #00E5FF;border-radius:16px;pointer-events:none;"></div>
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:2px solid rgba(0,229,255,0.5);border-radius:8px;pointer-events:none;"></div>
-  </div>
-  <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:12px;">Enfoca el QR dentro del recuadro</div>
-  <div id="qr-debug" style="color:#FFD700;font-size:11px;margin-top:6px;text-align:center;">Iniciando...</div>
-  <div onclick="cerrarCamara()" style="margin-top:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:12px 32px;border-radius:100px;font-weight:600;cursor:pointer;">Cancelar</div>
-</div>
 </body>
 </html>
