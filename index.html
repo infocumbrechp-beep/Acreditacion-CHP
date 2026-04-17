@@ -1959,8 +1959,10 @@ body {
       .then(function(stream) {
         qrStream = stream;
         video.srcObject = stream;
-        video.play();
-        requestAnimationFrame(escanearFrame);
+        video.onloadedmetadata = function() {
+          video.play();
+          requestAnimationFrame(escanearFrame);
+        };
       })
       .catch(function(err) {
         cerrarCamara();
