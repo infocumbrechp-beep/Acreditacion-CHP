@@ -89,6 +89,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 /* Hero */
 .hero{background:linear-gradient(160deg,#1A4F7A 0%,#1F618D 60%,#1A6B8A 100%);padding:52px 24px 36px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 70%);}
+.logo-img{width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3));}
+.countdown-box{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:6px 12px;min-width:48px;text-align:center;}
+.countdown-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1;}
+.countdown-lbl{font-size:9px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
 .logo-img{width:240px;max-width:88%;margin-bottom:18px;}
 .hero-date{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:14px;}
 .hero h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:6px;}
@@ -194,6 +198,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .tracking-success .ts-fill{height:100%;background:var(--green);border-radius:100px;transition:width 0.5s ease;}
 .tracking-cert-hint{font-size:12px;color:var(--green);font-weight:600;}
 /* Contacto */
+/* ── PREINSCRIPCIÓN ── */
+.preinscripcion-wrap{padding:8px 0 4px;}
+.btn-preinscribir{display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;padding:7px 14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;user-select:none;-webkit-user-select:none;transition:all 0.18s;}
+.btn-preinscribir:active{transform:scale(0.95);}
+.btn-preinscribir.inscrito{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+/* ── PÁGINA MIS CONFERENCIAS ── */
+.mis-conf-empty{margin:32px 16px;text-align:center;padding:40px 20px;background:#fff;border:2px dashed var(--border);border-radius:var(--radius-lg);color:var(--text-muted);}
+.mis-conf-empty .mc-icon{font-size:48px;margin-bottom:12px;}
+.mis-conf-empty p{font-size:14px;line-height:1.6;}
+.mis-conf-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin:0 16px 10px;overflow:hidden;box-shadow:var(--shadow);}
+.mis-conf-card.pasada{opacity:0.55;}
+.mc-day-strip{background:var(--blue);color:#fff;font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;}
+.mc-body{padding:12px 14px;}
+.mc-time{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+.mc-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.mc-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.btn-quitar{font-size:11px;color:var(--rose);cursor:pointer;padding:4px 0;user-select:none;}
+.mc-badge-ok{font-size:11px;font-weight:700;background:var(--green-bg);color:var(--green);border-radius:6px;padding:3px 10px;}
+.mc-resumen{margin:0 16px 16px;background:var(--blue-light);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.mc-resumen-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--blue);line-height:1;}
+.mc-resumen-txt{font-size:13px;color:var(--text-soft);}
+.mc-resumen-txt strong{color:var(--blue);}
 .contact-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);}
 .contact-item:last-child{border-bottom:none;}
 .c-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
@@ -389,6 +415,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
         <option value="Médico">Médico</option>
         <option value="Estudiante">Estudiante de medicina</option>
         <option value="Enfermero/a">Enfermero/a</option>
+        <option value="Otros">Otros (Paramédico, Bombero, Estudiante de enfermería, etc.)</option>
       </select>
     </div>
     <div id="reg-error" class="reg-error">⚠️ Por favor completa todos los campos obligatorios.</div>
@@ -453,9 +480,32 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 <!-- PÁGINA 1 — INICIO -->
 <div class="page" id="page-inicio">
   <div class="hero">
+    <img src="https://infocumbrechp-beep.github.io/Acreditacion-CHP/logo-cumbre.png" class="logo-img" alt="Cumbre Internacional CHP" onerror="this.style.display='none'">
     <div class="hero-date">📅 7 · 8 · 9 de mayo de 2026</div>
     <h1>Cumbre Internacional<br>Heridas y Piel</h1>
-    <p class="hero-sub">Salón Contemporáneo · C.C. Líder · Caracas</p>
+    <p class="hero-sub">Nivel Eventos · C.C. Líder · Caracas</p>
+    <!-- SPONSORS — reemplazar src con URLs reales de los logos -->
+    <div id="sponsors-strip" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px;margin-bottom:4px;padding:10px 16px;background:rgba(255,255,255,0.1);border-radius:12px;border:1px solid rgba(255,255,255,0.2);">
+      <div style="font-size:9px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px;width:100%;text-align:center;margin-bottom:4px;">Aval científico · Sponsors</div>
+      <!-- Sponsor placeholder 1 — sustituir img src por logo real -->
+      <div class="sponsor-slot" onclick="" title="Sponsor">
+        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
+      </div>
+      <!-- Sponsor placeholder 2 -->
+      <div class="sponsor-slot" onclick="" title="Sponsor">
+        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
+      </div>
+      <!-- Sponsor placeholder 3 -->
+      <div class="sponsor-slot" onclick="" title="Sponsor">
+        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
+      </div>
+      <!-- Sponsor placeholder 4 -->
+      <div class="sponsor-slot" onclick="" title="Sponsor">
+        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
+      </div>
+    </div>
+    <!-- Contador -->
+    <div id="hero-countdown" style="display:inline-flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;"></div>
   </div>
   <div class="section-label">Ahora mismo</div>
   <div class="now-card">
@@ -466,7 +516,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       <div class="now-speaker">👩‍⚕️ Dra. Verónica de la Fuente · 🇪🇸 España</div>
       <div class="now-cta">
         <div class="now-btn primary" id="go-programa">📅 Ver programa completo</div>
-        <div class="now-btn secondary" id="go-mapa">🗺️ Ver mapa</div>
+        <div class="now-btn secondary" onclick="showPage('miqr')" style="background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.4);">🎫 Mi QR</div>
       </div>
     </div>
   </div>
@@ -484,7 +534,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   </div>
   <div class="section-label">Información general</div>
   <div class="card">
-    <div class="info-block"><h4>📍 Ubicación</h4><ul><li>Salón Contemporáneo — C.C. Líder Sport Center</li><li>Caracas, Venezuela</li><li>Horario: 8:30 AM – 5:30 PM</li></ul></div>
+    <div class="info-block"><h4>📍 Ubicación</h4><ul><li>Nivel Eventos — C.C. Líder</li><li>Caracas, Venezuela</li><li>Horario: 8:30 AM – 5:30 PM</li></ul></div>
     <div class="info-block"><h4>🎫 Tu acreditación</h4><p>Muestra tu QR personal en la entrada. El staff lo escanea en segundos. Si tienes problema, busca a alguien con chaleco identificador.</p></div>
     <div class="info-block"><h4>🎓 Certificados</h4><p>Si registras asistencia en 5 o más conferencias, recibirás tu certificado por email dentro de las 24h post-evento.</p></div>
     <div class="info-block"><h4>📡 Aval científico</h4><p>Evento avalado por la <strong>Sociedad Venezolana de Cirugía</strong>. Organizado por <strong>Medical Shields MS, C.A.</strong> y <strong>Cuidamos Tu Herida</strong>.</p></div>
@@ -515,37 +565,37 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <!-- DÍA 1 -->
   <div class="program-day active" id="dia1">
     <div class="day-intro"><div><h3>Jueves 7 de Mayo</h3><p>🏥 Enfermería</p></div><span class="badge badge-blue">9 conferencias</span></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:15 – 9:35 AM</span></div><div class="session-body"><div class="session-title">Asepsia y Antisepsia</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jesús Pereira · Lic. Rosma</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:35 – 9:55 AM</span></div><div class="session-body"><div class="session-title">Epigenética y Nutrición Celular de la Cicatrización</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Lic. Valentina Kube</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:55 – 10:15 AM</span></div><div class="session-body"><div class="session-title">De la Teoría a la Práctica: Cuidado Avanzado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Dariela Ruíz</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">10:15 – 10:35 AM</span></div><div class="session-body"><div class="session-title">Indicaciones del Manejo de Enfermería Pre y Post de la Cámara Hiperbárica</div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-02"><div class="session-time-bar"><span class="t">9:15 – 9:35 AM</span></div><div class="session-body"><div class="session-title">Asepsia y Antisepsia</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jesús Pereira · Lic. Rosma</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-02',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-03"><div class="session-time-bar"><span class="t">9:35 – 9:55 AM</span></div><div class="session-body"><div class="session-title">Epigenética y Nutrición Celular de la Cicatrización</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Lic. Valentina Kube</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-03',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-04"><div class="session-time-bar"><span class="t">9:55 – 10:15 AM</span></div><div class="session-body"><div class="session-title">De la Teoría a la Práctica: Cuidado Avanzado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Dariela Ruíz</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-04',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-05"><div class="session-time-bar"><span class="t">10:15 – 10:35 AM</span></div><div class="session-body"><div class="session-title">Indicaciones del Manejo de Enfermería Pre y Post de la Cámara Hiperbárica</div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-05',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">10:35 – 11:05 AM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:05 – 11:25 AM</span></div><div class="session-body"><div class="session-title">Inteligencia Emocional y Cuidado Humanizado en Heridas Crónicas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Maryi García</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:25 – 11:45 AM</span></div><div class="session-body"><div class="session-title">Telemedicina y Monitorización Remota</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Mg. Hyeon Kim</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:45 AM – 12:05 PM</span></div><div class="session-body"><div class="session-title">Educación para el Cuidador: Empoderamiento del Paciente y su Cuidador</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Franca Lo Guidice</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-06"><div class="session-time-bar"><span class="t">11:05 – 11:25 AM</span></div><div class="session-body"><div class="session-title">Inteligencia Emocional y Cuidado Humanizado en Heridas Crónicas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Maryi García</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-06',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-07"><div class="session-time-bar"><span class="t">11:25 – 11:45 AM</span></div><div class="session-body"><div class="session-title">Telemedicina y Monitorización Remota</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Mg. Hyeon Kim</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-07',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-08"><div class="session-time-bar"><span class="t">11:45 AM – 12:05 PM</span></div><div class="session-body"><div class="session-title">Educación para el Cuidador: Empoderamiento del Paciente y su Cuidador</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Franca Lo Guidice</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-08',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">12:05 – 1:05 PM</span></div><div class="session-body"><div class="session-title">🍽 Almuerzo Libre</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">1:05 – 1:25 PM</span></div><div class="session-body"><div class="session-title">Cómo Manejar la Herida de un Paciente en la Consulta</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dra. Nilyan Rincón · Dr. Jesús Pereira</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-09"><div class="session-time-bar"><span class="t">1:05 – 1:25 PM</span></div><div class="session-body"><div class="session-title">Cómo Manejar la Herida de un Paciente en la Consulta</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dra. Nilyan Rincón · Dr. Jesús Pereira</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-09',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">1:25 – 2:25 PM</span><span class="badge badge-amber">TALLER PAGO</span></div><div class="session-body"><div class="session-title">🧪 Taller: Manejo Periostomal con Apósitos Especializados</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Dariela Ruiz</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">2:25 – 3:25 PM</span><span class="badge badge-amber">TALLER PAGO</span></div><div class="session-body"><div class="session-title">🧪 Taller: Cambios Posturales y Cuidado en la Alimentación</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Mg. Marisol Navarro</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">3:25 PM</span></div><div class="session-body"><div class="session-title">Innovación de Matrices de Colágeno y Prevención de Infecciones Nosocomiales</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D1-10"><div class="session-time-bar"><span class="t">3:25 PM</span></div><div class="session-body"><div class="session-title">Innovación de Matrices de Colágeno y Prevención de Infecciones Nosocomiales</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D1-10',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">4:00 PM</span></div><div class="session-body"><div class="session-title">🎬 Video Institucional · Cierre del Día</div></div></div>
   </div>
   <!-- DÍA 2 -->
   <div class="program-day" id="dia2">
     <div class="day-intro"><div><h3>Viernes 8 de Mayo</h3><p>👨‍⚕️ Especialistas Médicos</p></div><span class="badge badge-blue">13 sesiones</span></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:15 – 9:35 AM</span></div><div class="session-body"><div class="session-title">Heridas Agudas y Crónicas: Diferencias y Opciones de Tratamiento</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguelángel Useche · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:35 – 9:55 AM</span></div><div class="session-body"><div class="session-title">Sanando Piel, Restaurando Vida</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Irene Camacho · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:55 – 10:15 AM</span></div><div class="session-body"><div class="session-title">Quemaduras y sus Diferentes Aspectos</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Peluzo · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">10:15 – 10:35 AM</span></div><div class="session-body"><div class="session-title">Investigación e Innovación: Nuevos Materiales para el Cuidado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Verónica de la Fuente · Química</div><div class="spk-country">🇪🇸 España</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-01"><div class="session-time-bar"><span class="t">9:15 – 9:35 AM</span></div><div class="session-body"><div class="session-title">Heridas Agudas y Crónicas: Diferencias y Opciones de Tratamiento</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguelángel Useche · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-01',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-02"><div class="session-time-bar"><span class="t">9:35 – 9:55 AM</span></div><div class="session-body"><div class="session-title">Sanando Piel, Restaurando Vida</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Irene Camacho · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-02',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-03"><div class="session-time-bar"><span class="t">9:55 – 10:15 AM</span></div><div class="session-body"><div class="session-title">Quemaduras y sus Diferentes Aspectos</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Peluzo · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-03',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-04"><div class="session-time-bar"><span class="t">10:15 – 10:35 AM</span></div><div class="session-body"><div class="session-title">Investigación e Innovación: Nuevos Materiales para el Cuidado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Verónica de la Fuente · Química</div><div class="spk-country">🇪🇸 España</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-04',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">10:35 – 11:05 AM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:05 – 11:25 AM</span></div><div class="session-body"><div class="session-title">Experiencia con Nanotecnología en el Manejo Avanzado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Niuka Cedeño · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:25 – 11:45 AM</span></div><div class="session-body"><div class="session-title">Prevención de Infecciones Nosocomiales (Matriz de Colágeno)</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:45 AM – 12:05 PM</span></div><div class="session-body"><div class="session-title">Protocolo en el Cuidado Avanzado de Heridas y Piel</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jesús Pereira · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-05"><div class="session-time-bar"><span class="t">11:05 – 11:25 AM</span></div><div class="session-body"><div class="session-title">Experiencia con Nanotecnología en el Manejo Avanzado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Niuka Cedeño · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-05',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-06"><div class="session-time-bar"><span class="t">11:25 – 11:45 AM</span></div><div class="session-body"><div class="session-title">Prevención de Infecciones Nosocomiales (Matriz de Colágeno)</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-06',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-07"><div class="session-time-bar"><span class="t">11:45 AM – 12:05 PM</span></div><div class="session-body"><div class="session-title">Protocolo en el Cuidado Avanzado de Heridas y Piel</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jesús Pereira · Cirugía Plástica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-07',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">12:05 – 1:25 PM</span></div><div class="session-body"><div class="session-title">🍽 Almuerzo Libre</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">1:25 – 1:45 PM</span></div><div class="session-body"><div class="session-title">Microbiología</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Sandra Jaramillo · Dermatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">1:45 – 2:05 PM</span></div><div class="session-body"><div class="session-title">Micobacterias: Avances en Micobacterias</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jacobus de Waard · Bacteriólogo</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">2:05 – 2:25 PM</span></div><div class="session-body"><div class="session-title">Manejo de Heridas en Pacientes con Enfermedades Autoinmunes</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Luis Gutierrez · Inmunología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">2:25 – 2:45 PM</span></div><div class="session-body"><div class="session-title">Cuidado Avanzado de Pie Diabético Post Cateterismo</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Carlos Durán · Cirugía Cardiovascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-08"><div class="session-time-bar"><span class="t">1:25 – 1:45 PM</span></div><div class="session-body"><div class="session-title">Microbiología</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Sandra Jaramillo · Dermatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-08',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-09"><div class="session-time-bar"><span class="t">1:45 – 2:05 PM</span></div><div class="session-body"><div class="session-title">Micobacterias: Avances en Micobacterias</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jacobus de Waard · Bacteriólogo</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-09',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-10"><div class="session-time-bar"><span class="t">2:05 – 2:25 PM</span></div><div class="session-body"><div class="session-title">Manejo de Heridas en Pacientes con Enfermedades Autoinmunes</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Luis Gutierrez · Inmunología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-10',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-11"><div class="session-time-bar"><span class="t">2:25 – 2:45 PM</span></div><div class="session-body"><div class="session-title">Cuidado Avanzado de Pie Diabético Post Cateterismo</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Carlos Durán · Cirugía Cardiovascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-11',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">2:45 – 3:05 PM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">3:05 – 3:25 PM</span></div><div class="session-body"><div class="session-title">Cicatrización con Apoyo de la Tecnología Fotónica</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Lisbeth Alvarez · Cirugía Vascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">3:45 – 4:05 PM</span></div><div class="session-body"><div class="session-title">Beneficios de la Cámara Hiperbárica en el Cuidado de la Piel</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Adolfo González</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
@@ -555,20 +605,28 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="program-day" id="dia3">
     <div class="day-intro"><div><h3>Sábado 9 de Mayo</h3><p>👨‍⚕️ Especialistas Médicos</p></div><span class="badge badge-blue">10 sesiones</span></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">9:05 – 9:25 AM</span></div><div class="session-body"><div class="session-title">Nutrición Clínica Avanzada en Heridas Complejas: De la Evidencia a la Práctica</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Lic. Valentina Kube · Nutrición</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:25 – 9:45 AM</span></div><div class="session-body"><div class="session-title">Evaluación del Compuesto Antimicrobiano en Heridas Crónicas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Verónica de la Fuente · Química</div><div class="spk-country">🇪🇸 España</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">9:45 – 10:05 AM</span></div><div class="session-body"><div class="session-title">Infección del Sitio Quirúrgico</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Gustavo Prezzavento · Cirugía Plástica</div><div class="spk-country">🇦🇷 Argentina</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">10:05 – 10:25 AM</span></div><div class="session-body"><div class="session-title">Manejos de Heridas Complejas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Gabriela Brumtritt · Cirugía Vascular</div><div class="spk-country">🇦🇷 Argentina</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-12"><div class="session-time-bar"><span class="t">2:45 – 3:05 PM</span></div><div class="session-body"><div class="session-title">Cicatrización con Tecnología Fotónica</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Lisbeth Alvarez · Cirugía Vascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-12',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card break"><div class="session-time-bar"><span class="t">3:05 – 3:35 PM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
+    <div class="session-card" data-conf-id="CONF-D2-13"><div class="session-time-bar"><span class="t">3:35 – 3:55 PM</span></div><div class="session-body"><div class="session-title">Beneficios de la Cámara Hiperbárica</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Adolfo González</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D2-13',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card break"><div class="session-time-bar"><span class="t">4:00 PM</span></div><div class="session-body"><div class="session-title">🎬 Cierre del Día 2</div></div></div>
+  </div>
+  <!-- DÍA 3 -->
+  <div class="program-day" id="dia3">
+    <div class="day-intro"><div><h3>Sábado 9 de Mayo</h3><p>👨‍⚕️ Especialistas Médicos</p></div><span class="badge badge-blue">10 conferencias</span></div>
+    <div class="session-card" data-conf-id="CONF-D3-01"><div class="session-time-bar"><span class="t">9:05 – 9:25 AM</span></div><div class="session-body"><div class="session-title">Nutrición Clínica Avanzada en el Cuidado de Heridas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Lic. Valentina Kube</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-01',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-02"><div class="session-time-bar"><span class="t">9:25 – 9:45 AM</span></div><div class="session-body"><div class="session-title">Evaluación del Compuesto Antimicrobiano en Heridas Crónicas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Verónica de la Fuente · Química</div><div class="spk-country">🇪🇸 España</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-02',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-03"><div class="session-time-bar"><span class="t">9:45 – 10:05 AM</span></div><div class="session-body"><div class="session-title">Infección del Sitio Quirúrgico</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Gustavo Prezzavento · Cirugía Plástica</div><div class="spk-country">🇦🇷 Argentina</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-03',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-04"><div class="session-time-bar"><span class="t">10:05 – 10:25 AM</span></div><div class="session-body"><div class="session-title">Manejos de Heridas Complejas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Gabriela Brumtritt · Cirugía Vascular</div><div class="spk-country">🇦🇷 Argentina</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-04',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">10:25 – 10:55 AM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">10:55 – 11:15 AM</span></div><div class="session-body"><div class="session-title">Manejo del Dolor y Diferentes Opciones Terapéuticas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Aida Rodríguez · Psiquiatra</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:15 – 11:35 AM</span></div><div class="session-body"><div class="session-title">Del Hueso Blanco al Hueso Vivo: Algoritmos en la Exposición Ósea Compleja</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Molano · Traumatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">11:35 – 11:55 AM</span></div><div class="session-body"><div class="session-title">Conferencia: Dr. Danilo Martínez · Presidente Sociedad Venezolana de Psiquiatría</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Danilo Martínez</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-05"><div class="session-time-bar"><span class="t">10:55 – 11:15 AM</span></div><div class="session-body"><div class="session-title">Manejo del Dolor y Diferentes Opciones Terapéuticas</div><div class="session-spk"><div class="spk-av">👩‍⚕️</div><div><div class="spk-name">Dra. Aida Rodríguez · Psiquiatra</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-05',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-06"><div class="session-time-bar"><span class="t">11:15 – 11:35 AM</span></div><div class="session-body"><div class="session-title">Del Hueso Blanco al Hueso Vivo: Algoritmos en la Exposición Ósea Compleja</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Molano · Traumatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-06',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-07"><div class="session-time-bar"><span class="t">11:35 – 11:55 AM</span></div><div class="session-body"><div class="session-title">Conferencia: Dr. Danilo Martínez · Presidente Sociedad Venezolana de Psiquiatría</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Danilo Martínez</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-07',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">11:55 AM – 12:55 PM</span></div><div class="session-body"><div class="session-title">🍽 Almuerzo Libre</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">12:55 – 1:15 PM</span></div><div class="session-body"><div class="session-title">Cronificación de la Herida Traumática: Cuando Falla la Biología</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Molano · Traumatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">1:15 – 1:35 PM</span></div><div class="session-body"><div class="session-title">Cuidado Avanzado de Úlcera Venosa — Limpieza, Injerto, PRF, Cold Plasma</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Carlos Durán · Cirugía Cardiovascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">1:35 – 1:55 PM</span></div><div class="session-body"><div class="session-title">Conferencia: Dr. Jesús Romero · Anatomía Patológica</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Jesús Romero</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-08"><div class="session-time-bar"><span class="t">12:55 – 1:15 PM</span></div><div class="session-body"><div class="session-title">Cronificación de la Herida Traumática: Cuando Falla la Biología</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Miguel Molano · Traumatología</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-08',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-09"><div class="session-time-bar"><span class="t">1:15 – 1:35 PM</span></div><div class="session-body"><div class="session-title">Cuidado Avanzado de Úlcera Venosa — Limpieza, Injerto, PRF, Cold Plasma</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Carlos Durán · Cirugía Cardiovascular</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-09',this)">📌 Registrarme en conferencia</button></div></div></div>
+    <div class="session-card" data-conf-id="CONF-D3-10"><div class="session-time-bar"><span class="t">1:35 – 1:55 PM</span></div><div class="session-body"><div class="session-title">Patología de la Belleza: Aspectos Clínicos y Morfológicos</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Enrique López Loyo · Anatomía Patológica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div><div class="preinscripcion-wrap"><button class="btn-preinscribir" onclick="togglePreinscripcion('CONF-D3-10',this)">📌 Registrarme en conferencia</button></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">1:55 – 2:25 PM</span></div><div class="session-body"><div class="session-title">☕ Break · Visita a Casas Comerciales</div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">2:25 – 2:45 PM</span></div><div class="session-body"><div class="session-title">Patología de la Belleza: Aspectos Clínicos y Morfológicos</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Enrique López Loyo · Anatomía Patológica</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
-    <div class="session-card"><div class="session-time-bar"><span class="t">2:45 – 3:05 PM</span></div><div class="session-body"><div class="session-title">Prevención de Infecciones Nosocomiales (Matriz de Colágeno)</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div></div></div>
+    <div class="session-card"><div class="session-time-bar"><span class="t">2:25 – 3:05 PM</span></div><div class="session-body"><div class="session-title">Prevención de Infecciones Nosocomiales (Matriz de Colágeno)</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Lic. Héctor Padilla</div><div class="spk-country">🇨🇦 Canadá</div></div></div></div></div>
     <div class="session-card"><div class="session-time-bar"><span class="t">3:05 – 3:55 PM</span></div><div class="session-body"><div class="session-title">🤝 Mesa Redonda + Consenso de Protocolo para el Manejo y Cuidado de Heridas</div><div class="session-spk"><div class="spk-av">👨‍⚕️</div><div><div class="spk-name">Dr. Pereira · Dra. Rincón · Dr. O. González</div><div class="spk-country">🇻🇪 Venezuela</div></div></div></div></div>
     <div class="session-card break"><div class="session-time-bar"><span class="t">3:55 PM</span></div><div class="session-body"><div class="session-title">🎉 Cierre oficial de la Cumbre</div></div></div>
   </div>
@@ -620,9 +678,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="zone-grid">
     <div class="zone-card"><div class="zi">🎤</div><div class="zn">Sala Conferencias</div><div class="zd">Tarima principal</div></div>
     <div class="zone-card"><div class="zi">🏪</div><div class="zn">Casas Comerciales</div><div class="zd">Stands 2x2 y 3x2</div></div>
-    <div class="zone-card"><div class="zi">☕</div><div class="zn">Zona Café</div><div class="zd">Stand de comida</div></div>
     <div class="zone-card"><div class="zi">🚻</div><div class="zn">Baños</div><div class="zd">Señalizados en plano</div></div>
-    <div class="zone-card"><div class="zi">🛋</div><div class="zn">Zona Lounge</div><div class="zd">Área networking</div></div>
     <div class="zone-card"><div class="zi">🚪</div><div class="zn">Entrada / Salida</div><div class="zd">Arco de acceso</div></div>
   </div>
   <div class="card" style="margin:0 16px 12px;">
@@ -678,10 +734,15 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="section-label">Alertas WhatsApp</div>
   <div class="wa-alert"><div class="wa-icon">📳</div><div class="wa-text"><strong>Conferencias en tiempo real</strong>Recibirás alertas 10 minutos antes de cada conferencia.</div></div>
   <div class="wa-alert"><div class="wa-icon">🎟</div><div class="wa-text"><strong>Últimos cupos de talleres</strong>Te avisaremos cuando queden pocos lugares en los talleres pagos.</div></div>
-  <div class="wa-alert" style="background:#EBF5FB;border-color:#1565C8;"><div class="wa-icon">📹</div><div class="wa-text" style="color:#1A3A5C;"><strong>Grabaciones post-evento</strong>Al finalizar la Cumbre recibirás el link para comprar las conferencias grabadas en Hotmart.</div></div>
+  <div class="wa-alert" style="background:#EBF5FB;border-color:#1565C8;"><div class="wa-icon">📹</div><div class="wa-text" style="color:#1A3A5C;"><strong>Grabaciones post-evento</strong>Al finalizar la Cumbre todas las grabaciones de las conferencias estarán disponibles para su inscripción. Más adelante le daremos detalles de cómo inscribirse y costo.</div></div>
+  <div class="section-label">Organizadores</div>
+  <div class="card" style="margin:0 16px 12px;">
+    <div class="contact-item"><div class="c-icon" style="background:#EBF5FB;">🏥</div><div><div class="c-lbl">Medical Shields</div><div class="c-val" style="color:var(--blue);cursor:pointer;" onclick="window.open('https://medicalshields.com/','_blank')">medicalshields.com ↗</div></div></div>
+    <div class="contact-item"><div class="c-icon" style="background:#E8F5E9;">🩺</div><div><div class="c-lbl">Cuidamos Tu Herida</div><div class="c-val" style="color:var(--blue);cursor:pointer;" onclick="window.open('https://cuidamostuherida.com/','_blank')">cuidamostuherida.com ↗</div></div></div>
+  </div>
   <div class="section-label">Contacto</div>
   <div class="card" style="margin:0 16px 12px;">
-    <div class="contact-item"><div class="c-icon" style="background:#E7F8EE;">📱</div><div><div class="c-lbl">WhatsApp</div><div class="c-val">+58 414 320 3836</div></div></div>
+    <div class="contact-item"><div class="c-icon" style="background:#E7F8EE;">📱</div><div><div class="c-lbl">WhatsApp</div><div class="c-val">+58 414-2577408</div></div></div>
     <div class="contact-item"><div class="c-icon" style="background:#EBF5FB;">📧</div><div><div class="c-lbl">Correo</div><div class="c-val">comercial@cumbrechp.org</div></div></div>
     <div class="contact-item"><div class="c-icon" style="background:#FEF9E7;">🌐</div><div><div class="c-lbl">Web</div><div class="c-val">cumbrechp.org</div></div></div>
     <div class="contact-item"><div class="c-icon" style="background:#FDEDEC;">📸</div><div><div class="c-lbl">Instagram</div><div class="c-val">@cumbreinternacionalchp</div></div></div>
@@ -715,11 +776,29 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   </div>
 </div>
 
+<!-- PÁGINA MIS CONFERENCIAS -->
+<div class="page" id="page-misconf">
+  <div class="page-header"><h2>📋 Mis Conferencias</h2><p>Tu agenda personal · conferencias guardadas</p></div>
+  <div class="section-label">Resumen</div>
+  <div class="mc-resumen" id="mc-resumen-strip">
+    <div class="mc-resumen-num" id="mc-count">0</div>
+    <div class="mc-resumen-txt">conferencias guardadas en tu agenda<br><strong id="mc-hint">Agrega desde el Programa</strong></div>
+  </div>
+  <div class="section-label">Mi agenda</div>
+  <div id="mis-preinscripciones-list">
+    <div class="mis-conf-empty">
+      <div class="mc-icon">📌</div>
+      <p>Aún no tienes conferencias guardadas.<br>Ve al <strong>Programa</strong> y toca<br>"📌 Registrarme en conferencia" en cada una.</p>
+    </div>
+  </div>
+</div>
+
 <!-- NAVEGACIÓN INFERIOR -->
 <nav class="nav">
   <div class="nav-btn active" data-page="inicio"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
   <div class="nav-btn" data-page="programa"><div class="nav-icon">📅</div><div class="nav-label">Programa</div></div>
   <div class="nav-btn" data-page="tracking"><div class="nav-icon">📲</div><div class="nav-label">Asistencia</div></div>
+  <div class="nav-btn" data-page="misconf"><div class="nav-icon">📋</div><div class="nav-label">Mis Conf.</div></div>
   <div class="nav-btn" data-page="info"><div class="nav-icon">📢</div><div class="nav-label">Info</div></div>
 </nav>
 
@@ -757,8 +836,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function getDiasAutorizados(profesion) {
     if (!profesion) return [];
     var p = profesion.toLowerCase();
-    // Enfermero/a → solo Día 1
-    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1) {
+    // Enfermero/a y Otros → solo Día 1
+    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1 || p === 'otros') {
       return ['Día 1'];
     }
     // Médico y Estudiante → Días 2 y 3
@@ -778,7 +857,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 
   function getTipoPase(profesion) {
     var p = (profesion || '').toLowerCase();
-    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1) return 'ENFERMERÍA';
+    if (p.indexOf('enfermero') !== -1 || p.indexOf('enfermera') !== -1 || p === 'otros') return 'ENFERMERÍA';
     if (p.indexOf('estudiante') !== -1) return 'ESTUDIANTE';
     return 'MÉDICO';
   }
@@ -899,13 +978,63 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     try { localStorage.setItem('chp_asistente_v1', JSON.stringify(datos)); } catch(e) {}
   }
 
+  /* ── COUNTDOWN ── */
+  function iniciarCountdown() {
+    var TARGET = new Date('2026-05-07T08:30:00'); // Día 1 apertura 8:30 AM Caracas
+    var el = document.getElementById('hero-countdown');
+    if (!el) return;
+    function tick() {
+      var now = new Date();
+      var diff = TARGET - now;
+      if (diff <= 0) {
+        el.innerHTML = '<div class="countdown-box"><div class="countdown-num">🎉</div><div class="countdown-lbl">¡Hoy!</div></div>';
+        return;
+      }
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      el.innerHTML =
+        '<div class="countdown-box"><div class="countdown-num">' + d + '</div><div class="countdown-lbl">Días</div></div>' +
+        '<div class="countdown-box"><div class="countdown-num">' + (h<10?'0':'')+h + '</div><div class="countdown-lbl">Horas</div></div>' +
+        '<div class="countdown-box"><div class="countdown-num">' + (m<10?'0':'')+m + '</div><div class="countdown-lbl">Min</div></div>' +
+        '<div class="countdown-box"><div class="countdown-num">' + (s<10?'0':'')+s + '</div><div class="countdown-lbl">Seg</div></div>';
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  /* ── LOGO EN PESTAÑAS ── */
+  function inyectarLogoPestanas() {
+    var LOGO_SRC = 'https://infocumbrechp-beep.github.io/Acreditacion-CHP/logo-cumbre.png';
+    document.querySelectorAll('.page').forEach(function(page) {
+      if (page.id === 'page-inicio') return; // El inicio ya tiene logo en hero
+      if (page.querySelector('.page-logo')) return; // Ya inyectado
+      var firstEl = page.firstElementChild;
+      if (!firstEl) return;
+      var logoDiv = document.createElement('div');
+      logoDiv.className = 'page-logo';
+      logoDiv.style.cssText = 'text-align:center;padding:16px 0 4px;';
+      var img = document.createElement('img');
+      img.src = LOGO_SRC;
+      img.alt = 'CHP';
+      img.style.cssText = 'width:36px;height:36px;object-fit:contain;opacity:0.8;';
+      img.onerror = function(){ this.style.display='none'; };
+      logoDiv.appendChild(img);
+      page.insertBefore(logoDiv, firstEl);
+    });
+  }
+
   function iniciarApp() {
     datosAsistente = cargarDatosAsistente();
+    renderMisConferencias();
+    iniciarCountdown();
+    setTimeout(inyectarLogoPestanas, 200);
     if (datosAsistente && datosAsistente.nombre && datosAsistente.email) {
       // Ya registrado — ir directo a Mi QR
       document.getElementById('page-registro').classList.remove('active');
       showPageDirect('miqr');
-      setTimeout(function(){ generarQRPersonal(); filtrarProgramaPorProfesion(); }, 150);
+      setTimeout(function(){ generarQRPersonal(); filtrarProgramaPorProfesion(); sincronizarBotonesPrograma(loadPreinscripciones()); }, 150);
     } else {
       // Mostrar formulario
       document.getElementById('page-registro').classList.add('active');
@@ -1058,6 +1187,14 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     // Regenerar QR al entrar a Mi QR
     if (pageId === 'miqr' && datosAsistente) {
       setTimeout(generarQRPersonal, 100);
+    }
+    // Actualizar Mis Conferencias al entrar
+    if (pageId === 'misconf') {
+      renderMisConferencias();
+    }
+    // Sincronizar botones al entrar al Programa
+    if (pageId === 'programa') {
+      sincronizarBotonesPrograma(loadPreinscripciones());
     }
   }
 
@@ -1470,6 +1607,152 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     bindAll(); updateProgress(); procesarURLParams(); iniciarApp();
   }
 
+
+  /* ══════════════════════════════════════════════════════
+     PREINSCRIPCIÓN A CONFERENCIAS
+  ══════════════════════════════════════════════════════ */
+
+  var PREINSC_KEY = 'chp_preinscripciones_v1';
+
+  function escapeHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function parseDT(fechaStr, horaStr) {
+    // fechaStr: '2026-05-07', horaStr: '09:15'
+    try {
+      var parts = fechaStr.split('-');
+      var hparts = horaStr.split(':');
+      return new Date(+parts[0], +parts[1]-1, +parts[2], +hparts[0], +hparts[1]);
+    } catch(e) { return new Date(0); }
+  }
+
+  function loadPreinscripciones() {
+    try { var d = localStorage.getItem(PREINSC_KEY); return d ? JSON.parse(d) : []; } catch(e) { return []; }
+  }
+
+  function savePreinscripciones(arr) {
+    try { localStorage.setItem(PREINSC_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+
+  function togglePreinscripcion(confId, btn) {
+    if (!datosAsistente) {
+      alert('⚠️ Primero completa tu registro para guardar conferencias en tu agenda.');
+      return;
+    }
+    var lista = loadPreinscripciones();
+    var idx = lista.indexOf(confId);
+    if (idx === -1) {
+      lista.push(confId);
+      btn.textContent = '✅ Guardada en mi agenda';
+      btn.classList.add('inscrito');
+      // Enviar a Sheets
+      var conf = CONF_SCHEDULE[confId] || {};
+      enviarASheets('preinscripcion_conferencia', {
+        conf_id: confId,
+        conf_nombre: conf.nombre || confId,
+        conf_dia: conf.dia || '',
+        conf_hora: conf.hora || '',
+        nombre_completo: datosAsistente.nombreCompleto,
+        email: datosAsistente.email,
+        especialidad: datosAsistente.especialidad
+      });
+    } else {
+      lista.splice(idx, 1);
+      btn.textContent = '📌 Registrarme en conferencia';
+      btn.classList.remove('inscrito');
+    }
+    savePreinscripciones(lista);
+    renderMisConferencias();
+  }
+  window.togglePreinscripcion = togglePreinscripcion;
+
+  function renderMisConferencias() {
+    var lista = loadPreinscripciones();
+    var container = document.getElementById('mis-preinscripciones-list');
+    var countEl = document.getElementById('mc-count');
+    var hintEl = document.getElementById('mc-hint');
+    if (!container) return;
+
+    // Actualizar contador
+    if (countEl) countEl.textContent = lista.length;
+    if (hintEl) {
+      hintEl.textContent = lista.length === 0
+        ? 'Agrega desde el Programa'
+        : lista.length === 1 ? 'conferencia en tu plan' : 'conferencias en tu plan';
+    }
+
+    if (lista.length === 0) {
+      container.innerHTML = '<div class="mis-conf-empty"><div class="mc-icon">📌</div><p>Aún no tienes conferencias guardadas.<br>Ve al <strong>Programa</strong> y toca<br>"📌 Registrarme en conferencia" en cada una.</p></div>';
+      return;
+    }
+
+    // Ordenar por fecha+hora
+    var ordenadas = lista.slice().sort(function(a, b) {
+      var ca = CONF_SCHEDULE[a], cb = CONF_SCHEDULE[b];
+      if (!ca || !cb) return 0;
+      return parseDT(ca.fecha, ca.hora) - parseDT(cb.fecha, cb.hora);
+    });
+
+    var ahora = new Date();
+    var html = '';
+    var diaActual = '';
+    ordenadas.forEach(function(confId) {
+      var conf = CONF_SCHEDULE[confId];
+      if (!conf) return;
+      var dtConf = parseDT(conf.fecha, conf.hora);
+      var pasada = dtConf < ahora;
+      // Separador de día
+      if (conf.dia !== diaActual) {
+        diaActual = conf.dia;
+        var fechaLabel = conf.dia === 'Día 1' ? 'Jueves 7 de Mayo'
+          : conf.dia === 'Día 2' ? 'Viernes 8 de Mayo'
+          : 'Sábado 9 de Mayo';
+        html += '<div class="mc-day-strip">' + escapeHtml(conf.dia) + ' · ' + escapeHtml(fechaLabel) + '</div>';
+      }
+      html += '<div class="mis-conf-card' + (pasada ? ' pasada' : '') + '">' +
+        '<div class="mc-body">' +
+          '<div class="mc-time">⏰ ' + escapeHtml(conf.hora) + ' · ' + escapeHtml(conf.dia) + (pasada ? ' · <em>Finalizada</em>' : '') + '</div>' +
+          '<div class="mc-title">' + escapeHtml(conf.nombre) + '</div>' +
+          '<div class="mc-actions">' +
+            (pasada
+              ? '<span class="mc-badge-ok">✅ Asististe</span>'
+              : '<span class="btn-quitar" onclick="quitarPreinscripcion(\'' + confId + '\')">✕ Quitar de mi agenda</span>') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    container.innerHTML = html;
+
+    // Sincronizar estado de botones en el programa
+    sincronizarBotonesPrograma(lista);
+  }
+
+  function quitarPreinscripcion(confId) {
+    var lista = loadPreinscripciones();
+    var idx = lista.indexOf(confId);
+    if (idx !== -1) lista.splice(idx, 1);
+    savePreinscripciones(lista);
+    renderMisConferencias();
+    sincronizarBotonesPrograma(lista);
+  }
+  window.quitarPreinscripcion = quitarPreinscripcion;
+
+  function sincronizarBotonesPrograma(lista) {
+    document.querySelectorAll('.btn-preinscribir').forEach(function(btn) {
+      var card = btn.closest('[data-conf-id]');
+      if (!card) return;
+      var confId = card.getAttribute('data-conf-id');
+      if (lista.indexOf(confId) !== -1) {
+        btn.textContent = '✅ Guardada en mi agenda';
+        btn.classList.add('inscrito');
+      } else {
+        btn.textContent = '📌 Registrarme en conferencia';
+        btn.classList.remove('inscrito');
+      }
+    });
+  }
+
 })();
 </script>
 
@@ -1478,58 +1761,31 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="install-sheet" onclick="event.stopPropagation()">
     <div class="install-handle"></div>
 
-    <!-- iOS -->
+    <!-- CHROME — único navegador recomendado -->
     <div id="install-ios">
       <div style="text-align:center;">
-        <div class="install-badge">📱 iPhone · Safari</div>
+        <div class="install-badge" style="background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;">🌐 Solo en Google Chrome</div>
       </div>
-      <div class="install-title">Guarda la app en tu pantalla</div>
-      <div class="install-sub">Sigue estos 3 pasos — tarda menos de 30 segundos</div>
-      <div class="install-step">
-        <div class="install-step-num">1</div>
-        <div class="install-step-text">
-          <strong>Toca el botón compartir</strong>
-          <span>Es el ícono de cuadro con flecha hacia arriba <strong>⬆️</strong> en la barra inferior de Safari</span>
-        </div>
-      </div>
-      <div class="install-step">
-        <div class="install-step-num">2</div>
-        <div class="install-step-text">
-          <strong>Selecciona "Añadir a pantalla de inicio"</strong>
-          <span>Desplázate hacia abajo en el menú hasta encontrar esa opción</span>
-        </div>
-      </div>
-      <div class="install-step">
-        <div class="install-step-num">3</div>
-        <div class="install-step-text">
-          <strong>Toca "Añadir" en la esquina superior derecha</strong>
-          <span>La app aparecerá en tu pantalla de inicio como cualquier aplicación</span>
-        </div>
-      </div>
-      <div style="background:#FEF9E7;border:1px solid #F0D58C;border-radius:10px;padding:12px 14px;margin-top:12px;">
-        <p style="font-size:12px;color:#7D6608;margin:0;">⚠️ <strong>Importante:</strong> Debe estar en <strong>Safari</strong>. Si abriste el link desde WhatsApp o Instagram, toca los 3 puntos y selecciona "Abrir en Safari" primero.</p>
-      </div>
-    </div>
+      <div class="install-title">Guarda la app en tu teléfono</div>
+      <div class="install-sub">Usa <strong>Google Chrome</strong> para una experiencia sin problemas</div>
 
-    <!-- Android -->
-    <div id="install-android" style="display:none;">
-      <div style="text-align:center;">
-        <div class="install-badge">📱 Android · Chrome</div>
+      <!-- Alerta: abrir en Chrome primero -->
+      <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+        <p style="font-size:12px;color:#E65100;margin:0;">⚠️ <strong>Antes de comenzar:</strong> Si abriste este link desde WhatsApp, Instagram u otro app, cópialo y ábrelo directamente en <strong>Google Chrome</strong>.</p>
       </div>
-      <div class="install-title">Guarda la app en tu pantalla</div>
-      <div class="install-sub">Sigue estos 3 pasos — tarda menos de 30 segundos</div>
+
       <div class="install-step">
         <div class="install-step-num">1</div>
         <div class="install-step-text">
-          <strong>Toca el menú de Chrome</strong>
-          <span>Es el ícono de <strong>3 puntos verticales ⋮</strong> en la esquina superior derecha</span>
+          <strong>Abre el menú de Chrome</strong>
+          <span>Toca los <strong>3 puntos ⋮</strong> en la esquina superior derecha de Chrome</span>
         </div>
       </div>
       <div class="install-step">
         <div class="install-step-num">2</div>
         <div class="install-step-text">
           <strong>Selecciona "Añadir a pantalla de inicio"</strong>
-          <span>O puede decir "Instalar aplicación" — ambas opciones funcionan igual</span>
+          <span>También puede aparecer como <strong>"Instalar aplicación"</strong> — ambas opciones funcionan igual</span>
         </div>
       </div>
       <div class="install-step">
@@ -1539,10 +1795,21 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
           <span>La app aparecerá en tu pantalla de inicio con el ícono de la Cumbre CHP</span>
         </div>
       </div>
-      <div style="background:#E9F7EF;border:1px solid #A9DFBF;border-radius:10px;padding:12px 14px;margin-top:12px;">
-        <p style="font-size:12px;color:#1A5E30;margin:0;">✅ Chrome detecta automáticamente que es una app instalable. Puede aparecer un banner en la parte inferior — tócalo directamente.</p>
+      <div class="install-step" style="border-bottom:none;">
+        <div class="install-step-num">✅</div>
+        <div class="install-step-text">
+          <strong>¡Listo! Abre la app desde tu pantalla de inicio</strong>
+          <span>Funciona incluso sin internet gracias a la instalación local</span>
+        </div>
+      </div>
+
+      <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:12px 14px;margin-top:4px;">
+        <p style="font-size:12px;color:#1A5E30;margin:0;">💡 <strong>¿No ves la opción?</strong> Asegúrate de estar usando la última versión de <strong>Google Chrome</strong>. En algunos Android Chrome muestra un banner azul en la parte inferior — tócalo directamente.</p>
       </div>
     </div>
+
+    <!-- Android se oculta — solo Chrome -->
+    <div id="install-android" style="display:none;"></div>
 
     <button class="install-close" onclick="cerrarInstall()">Entendido ✓</button>
   </div>
