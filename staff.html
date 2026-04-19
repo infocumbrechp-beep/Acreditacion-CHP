@@ -281,6 +281,23 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
       <button class="scan-btn" id="btn-scan-staff">
         <span class="ico">📷</span> Escanear QR del asistente
       </button>
+      <!-- Búsqueda manual -->
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <input id="manual-id-staff" type="text"
+          placeholder="Ingresa ID manualmente (ej: CHP-ABC123)"
+          style="flex:1;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border2);
+                 border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+                 outline:none;-webkit-appearance:none;">
+        <button id="btn-manual-staff"
+          style="padding:12px 16px;background:var(--surface2);border:1.5px solid var(--border2);
+                 border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;
+                 font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          Buscar
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;padding:0 2px;font-family:'DM Mono',monospace;">
+        Usa la búsqueda manual si la cámara falla o el QR está dañado
+      </div>
     </div>
 
     <!-- RESULTADO -->
@@ -295,6 +312,11 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
         <div class="res-pills" id="res-pills"></div>
         <div id="res-extra"></div>
         <button class="btn-next" id="btn-next-scan">← Siguiente asistente</button>
+        <button class="btn-next" id="btn-derivar"
+          style="margin-top:8px;background:var(--amber-dim);border:1px solid var(--amber);
+                 color:var(--amber);display:none;">
+          ⚠️ Derivar a Mesa de Soluciones
+        </button>
       </div>
     </div>
 
@@ -316,6 +338,28 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
   <div class="qr-hint">Apunta al QR del asistente</div>
   <div id="qr-status-staff"></div>
   <div class="qr-cancel" onclick="cerrarCamaraStaff()">Cancelar</div>
+</div>
+
+<!-- MODAL INCIDENCIA -->
+<div id="incidencia-modal" style="display:none;position:fixed;inset:0;background:rgba(5,10,20,0.92);z-index:700;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:28px 24px 40px;animation:slideUp 0.3s ease;">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:100px;margin:0 auto 20px;"></div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--amber);margin-bottom:6px;">⚠️ Derivar a Mesa de Soluciones</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">El caso quedará registrado como incidencia. Indica al participante que pase a la Mesa de Soluciones.</div>
+    <div id="derivar-info" style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--text);"></div>
+    <div style="margin-bottom:12px;">
+      <label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Motivo de derivación</label>
+      <select id="motivo-derivacion" style="width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;appearance:none;-webkit-appearance:none;">
+        <option value="QR dañado o ilegible">QR dañado o ilegible</option>
+        <option value="Datos incorrectos en el QR">Datos incorrectos en el QR</option>
+        <option value="Día de acceso incorrecto">Día de acceso incorrecto — requiere verificación</option>
+        <option value="Asistente no registrado">Asistente no registrado en el sistema</option>
+        <option value="Otro">Otro motivo</option>
+      </select>
+    </div>
+    <button id="btn-confirmar-derivar" style="width:100%;padding:14px;background:var(--amber);border:none;border-radius:12px;color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;">Confirmar derivación</button>
+    <button onclick="cerrarDerivacion()" style="width:100%;padding:14px;background:rgba(255,255,255,0.07);border:none;border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">Cancelar</button>
+  </div>
 </div>
 
 <!-- MODAL EXPORTAR -->
@@ -574,6 +618,15 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
       addPill(res.hora, 'pill-time');
     }
 
+    // Guardar para derivación
+    ultimoResultado = res;
+
+    // Mostrar botón derivar en casos que no sean válidos normales
+    var btnDerivar = document.getElementById('btn-derivar');
+    if (btnDerivar) {
+      btnDerivar.style.display = (res.tipo === 'wrong' || res.tipo === 'invalid') ? 'block' : 'none';
+    }
+
     // Scroll al resultado
     document.getElementById('main-scroll').scrollTo({ top:0, behavior:'smooth' });
   }
@@ -604,7 +657,10 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
     guardarRegistrosLocales();
     actualizarContadores();
     renderLista();
-    sincronizarUno(registro);
+    // Intentar sincronizar inmediatamente — si falla queda pendiente
+    sincronizarUno(registro, function(ok) {
+      actualizarSyncBadge();
+    });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -663,56 +719,91 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
   /* ══════════════════════════════════════════════════════
      SINCRONIZACIÓN — Envío a Google Sheets
   ══════════════════════════════════════════════════════ */
-  function sincronizarUno(registro) {
-    if (!SHEETS_URL) return;
-    try {
+  function sincronizarUno(registro, onDone) {
+    if (!SHEETS_URL) { if (onDone) onDone(false); return; }
+    var payload = JSON.stringify({
+      tipo:         'acreditacion',
+      uid:          registro.uid,
+      nombre:       registro.nombre,
+      especialidad: registro.especialidad,
+      pase:         registro.pase,
+      dia:          registro.dia,
+      fecha:        registro.fecha,
+      hora:         registro.hora,
+      staffId:      registro.staffId,
+      timestamp:    registro.timestamp
+    });
+    // Intentar con fetch normal primero (CORS puede funcionar con el Apps Script)
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    }).then(function(r) {
+      registro.sincronizado = true;
+      guardarRegistrosLocales();
+      if (onDone) onDone(true);
+    }).catch(function() {
+      // Fallback no-cors (sin confirmación pero intenta llegar)
       fetch(SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tipo:         'acreditacion',
-          uid:          registro.uid,
-          nombre:       registro.nombre,
-          especialidad: registro.especialidad,
-          pase:         registro.pase,
-          dia:          registro.dia,
-          fecha:        registro.fecha,
-          hora:         registro.hora,
-          staffId:      registro.staffId,
-          timestamp:    registro.timestamp
-        })
+        body: payload
       }).then(function() {
-        // Marcar como sincronizado (best effort con no-cors)
+        // Con no-cors asumimos que llegó si no hubo error de red
         registro.sincronizado = true;
         guardarRegistrosLocales();
-        actualizarSyncBadge();
+        if (onDone) onDone(true);
       }).catch(function() {
-        // Sin internet — queda pendiente
-        actualizarSyncBadge();
+        if (onDone) onDone(false);
       });
-    } catch(e) {}
+    });
   }
 
   function sincronizarTodos() {
-    var pendientes = registros.filter(function(r){ return !r.sincronizado; });
-    if (!pendientes.length) {
-      alert('Todo está sincronizado ✅');
+    if (!registros.length) {
+      alert('No hay registros para sincronizar.');
       return;
     }
-    var count = 0;
-    pendientes.forEach(function(r, i) {
-      setTimeout(function() {
-        sincronizarUno(r);
-        count++;
-        if (count === pendientes.length) {
-          setTimeout(function(){
-            document.getElementById('exp-pending').textContent = registros.filter(function(x){ return !x.sincronizado; }).length;
-          }, 2000);
+    var pendientes = registros.filter(function(r){ return !r.sincronizado; });
+    if (!pendientes.length) {
+      alert('✅ Todo está sincronizado con Google Sheets.');
+      cerrarExport();
+      return;
+    }
+    var expPend = document.getElementById('exp-pending');
+    var btnSync = document.getElementById('btn-sync-sheets');
+    btnSync.textContent = 'Enviando ' + pendientes.length + ' registros...';
+    btnSync.disabled = true;
+    var enviados = 0;
+    var errores = 0;
+
+    function procesarSiguiente(idx) {
+      if (idx >= pendientes.length) {
+        // Terminó
+        guardarRegistrosLocales();
+        actualizarSyncBadge();
+        var restantes = registros.filter(function(r){ return !r.sincronizado; }).length;
+        expPend.textContent = restantes;
+        btnSync.disabled = false;
+        btnSync.textContent = '↑ Sincronizar con Google Sheets';
+        if (restantes === 0) {
+          alert('✅ ' + enviados + ' registros sincronizados correctamente.');
+          cerrarExport();
+        } else {
+          alert('⚠️ ' + enviados + ' enviados, ' + errores + ' con error.
+Verifica tu conexión e intenta de nuevo.');
         }
-      }, i * 400); // escalonado para no saturar
-    });
-    document.getElementById('exp-pending').textContent = 'Enviando...';
+        return;
+      }
+      var r = pendientes[idx];
+      expPend.textContent = 'Enviando ' + (idx+1) + ' de ' + pendientes.length + '...';
+      sincronizarUno(r, function(ok) {
+        if (ok) enviados++; else errores++;
+        setTimeout(function(){ procesarSiguiente(idx + 1); }, 600);
+      });
+    }
+    procesarSiguiente(0);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -741,8 +832,12 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
      MODAL EXPORTAR
   ══════════════════════════════════════════════════════ */
   function exportarDatos() {
+    var pendientes = registros.filter(function(r){ return !r.sincronizado; }).length;
     document.getElementById('exp-total').textContent = registros.length;
-    document.getElementById('exp-pending').textContent = registros.filter(function(r){ return !r.sincronizado; }).length;
+    document.getElementById('exp-pending').textContent = pendientes;
+    document.getElementById('btn-sync-sheets').textContent = pendientes > 0
+      ? '↑ Sincronizar ' + pendientes + ' pendientes'
+      : '↑ Sincronizar con Google Sheets';
     document.getElementById('export-modal').classList.add('open');
   }
   function cerrarExport() {
@@ -861,13 +956,129 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-heig
   }
 
   /* ── BOTONES ── */
-  document.getElementById('btn-scan-staff').addEventListener('click', abrirCamaraStaff);
-  document.getElementById('btn-next-scan').addEventListener('click', function() {
+  /* ══════════════════════════════════════════════════════
+     BÚSQUEDA MANUAL
+  ══════════════════════════════════════════════════════ */
+  function validarManualStaff() {
+    var inp = document.getElementById('manual-id-staff');
+    var id = (inp ? inp.value.trim() : '').toUpperCase();
+    if (!id) { alert('Por favor ingresa un ID válido.'); return; }
+    procesarQRStaff(id);
+    if (inp) inp.value = '';
+  }
+
+  /* ══════════════════════════════════════════════════════
+     DERIVACIÓN A MESA DE SOLUCIONES
+  ══════════════════════════════════════════════════════ */
+  var ultimoResultado = null; // guarda el último resultado para la derivación
+
+  function abrirDerivacion() {
+    var modal = document.getElementById('incidencia-modal');
+    var infoEl = document.getElementById('derivar-info');
+    if (ultimoResultado && ultimoResultado.asistente) {
+      var a = ultimoResultado.asistente;
+      infoEl.innerHTML =
+        '<strong>' + (a.nombre || 'Asistente') + '</strong><br>' +
+        '<span style="color:var(--muted);font-size:12px;">' +
+          (a.especialidad || a.pase || '—') + ' · ' +
+          (ultimoResultado.hora || horaActual()) +
+        '</span>';
+    } else {
+      infoEl.innerHTML = '<span style="color:var(--muted);">Sin datos del asistente</span>';
+    }
+    modal.style.display = 'flex';
+  }
+
+  function cerrarDerivacion() {
+    document.getElementById('incidencia-modal').style.display = 'none';
+  }
+  window.cerrarDerivacion = cerrarDerivacion;
+
+  function confirmarDerivacion() {
+    var motivo = document.getElementById('motivo-derivacion').value;
+    var a = ultimoResultado ? ultimoResultado.asistente : {};
+    var hora = horaActual();
+
+    // Registrar incidencia en Sheets
+    if (SHEETS_URL) {
+      try {
+        fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'incidencia',
+            uid: a.uid || '—',
+            nombre: a.nombre || '—',
+            especialidad: a.especialidad || '—',
+            pase: a.pase || '—',
+            motivo: motivo,
+            dia: diaNombre,
+            fecha: diaFecha,
+            hora: hora,
+            staffId: staffId
+          })
+        }).catch(function(){});
+      } catch(e) {}
+    }
+
+    cerrarDerivacion();
+
+    // Limpiar pantalla para el siguiente
     document.getElementById('res-card').style.display = 'none';
     document.getElementById('res-card').className = 'result-card';
-    // Scroll arriba y volver a escanear
+    document.getElementById('btn-derivar').style.display = 'none';
+    ultimoResultado = null;
+
+    // Mensaje de confirmación
+    alert('✅ Derivación registrada.\nIndica al participante que pase a la Mesa de Soluciones.');
     document.getElementById('main-scroll').scrollTo({ top:0, behavior:'smooth' });
-    setTimeout(abrirCamaraStaff, 300);
+  }
+
+  /* ── BOTONES ── */
+  document.getElementById('btn-scan-staff').addEventListener('click', abrirCamaraStaff);
+
+  document.getElementById('btn-manual-staff').addEventListener('click', validarManualStaff);
+  document.getElementById('manual-id-staff').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); validarManualStaff(); }
+  });
+
+  document.getElementById('btn-next-scan').addEventListener('click', function() {
+    // Limpiar resultado
+    var card = document.getElementById('res-card');
+    card.style.display = 'none';
+    card.className = 'result-card';
+    var btnDer = document.getElementById('btn-derivar');
+    if (btnDer) btnDer.style.display = 'none';
+    ultimoResultado = null;
+    // Limpiar input manual
+    var inp = document.getElementById('manual-id-staff');
+    if (inp) inp.value = '';
+    // Asegurar que la cámara esté completamente cerrada antes de reabrir
+    if (html5QrStaff && qrStaffActivo) {
+      qrStaffActivo = false;
+      html5QrStaff.stop().then(function(){
+        try { html5QrStaff.clear(); } catch(ex) {}
+        html5QrStaff = null;
+        document.getElementById('main-scroll').scrollTo({ top:0, behavior:'smooth' });
+        setTimeout(abrirCamaraStaff, 400);
+      }).catch(function(){
+        try { html5QrStaff.clear(); } catch(ex) {}
+        html5QrStaff = null;
+        document.getElementById('main-scroll').scrollTo({ top:0, behavior:'smooth' });
+        setTimeout(abrirCamaraStaff, 400);
+      });
+    } else {
+      if (html5QrStaff) { try { html5QrStaff.clear(); } catch(ex) {} html5QrStaff = null; }
+      document.getElementById('main-scroll').scrollTo({ top:0, behavior:'smooth' });
+      setTimeout(abrirCamaraStaff, 400);
+    }
+  });
+
+  document.getElementById('btn-derivar').addEventListener('click', abrirDerivacion);
+  document.getElementById('btn-confirmar-derivar').addEventListener('click', confirmarDerivacion);
+  document.getElementById('incidencia-modal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarDerivacion();
   });
 
 })();
