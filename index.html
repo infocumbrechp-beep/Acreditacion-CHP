@@ -2,17 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#1A5276">
-<title>Acreditación CHP 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0A1628">
+<title>Registro CHP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  /* MANTENIENDO TU ESTILO ORIGINAL */
   :root {
     --bg:#0A1628; --card:#111E35; --line:rgba(255,255,255,.10);
     --text:#E8F0FF; --muted:#8CA3C2; --blue:#1565C8;
@@ -22,20 +20,29 @@
   body { margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
   .container { width:100%; max-width:460px; margin:0 auto; padding:20px 18px; }
   .hidden { display:none !important; }
+  
+  /* Formulario */
   .panel { background:var(--card); border:1px solid var(--line); border-radius:24px; padding:22px; box-shadow:var(--shadow); }
   .title { font-family:'Syne',sans-serif; font-size:28px; text-align:center; margin-bottom:8px; font-weight:800; }
-  .sub { text-align:center; color:var(--muted); font-size:14px; margin-bottom:24px; line-height:1.5; }
-  .form-group { margin-bottom:14px; text-align:left; }
+  .sub { text-align:center; color:var(--muted); font-size:14px; margin-bottom:24px; }
+  .form-group { margin-bottom:14px; }
   label { display:block; margin-bottom:6px; font-size:13px; color:#B9CAE0; font-weight:600; }
   input, select { width:100%; padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.04); color:var(--text); font-size:16px; outline:none; }
-  .btn-main { width:100%; border:none; border-radius:14px; padding:16px; font-weight:800; font-family:'Syne',sans-serif; background:linear-gradient(135deg,#1565C8,#2E86F5); color:#fff; cursor:pointer; margin-top:10px; transition:0.2s; }
-  .card-pase { border-radius:28px; padding:20px; text-align:center; color:#fff; position:relative; overflow:hidden; }
-  #qrcode { background:#fff; padding:10px; border-radius:18px; display:inline-block; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
-  .user-name { font-family:'Syne',sans-serif; font-size:24px; margin:5px 0; line-height:1.2; }
-  .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
-  .menu-item { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px 10px; text-align:center; cursor:pointer; }
-  .menu-icon { font-size:26px; margin-bottom:8px; display:block; }
-  .menu-text { font-size:13px; font-weight:700; }
+  .btn-main { width:100%; border:none; border-radius:14px; padding:16px; font-weight:800; font-family:'Syne',sans-serif; background:linear-gradient(135deg,#1565C8,#2E86F5); color:#fff; cursor:pointer; }
+
+  /* Menú Principal Estilo App */
+  .menu-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:20px; }
+  .menu-item { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:25px 15px; text-align:center; cursor:pointer; transition: 0.2s; }
+  .menu-item:active { transform: scale(0.95); }
+  .menu-icon { font-size:32px; margin-bottom:10px; display:block; }
+  .menu-text { font-size:14px; font-weight:700; color:var(--text); }
+
+  /* Pase y Modal */
+  #pase-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; padding:20px; overflow-y:auto; }
+  .card-pase { border-radius:28px; padding:24px; text-align:center; color:#fff; position:relative; }
+  #qrcode { background:#fff; padding:12px; border-radius:18px; display:inline-block; margin:15px 0; }
+  .user-name { font-family:'Syne',sans-serif; font-size:24px; margin:10px 0 5px; }
+  
   .msg { display:none; padding:12px; border-radius:12px; margin-top:10px; font-size:13px; text-align:center; }
   .msg.error { display:block; background:rgba(180,35,24,.2); border:1px solid #b42318; color:#FFD9D6; }
 </style>
@@ -43,10 +50,8 @@
 <body>
 
 <div id="registro-screen" class="container">
-  <img src="assets/logo-light.jpg" style="width:120px; display:block; margin:0 auto 15px;" onerror="this.style.display='none'">
   <h1 class="title">Registro CHP 2026</h1>
-  <p class="sub">Completa tus datos para activar tu plataforma del asistente.</p>
-  
+  <p class="sub">Activa tu plataforma del asistente.</p>
   <div class="panel">
     <div class="form-group">
       <label>Nombre y Apellido</label>
@@ -58,7 +63,7 @@
     </div>
     <div class="form-group">
       <label>Teléfono (WhatsApp)</label>
-      <input type="tel" id="reg-telefono" placeholder="+58 412 0000000">
+      <input type="tel" id="reg-telefono" placeholder="+58...">
     </div>
     <div class="form-group">
       <label>Categoría Profesional</label>
@@ -70,41 +75,60 @@
         <option value="Otros">Otros / Expositores</option>
       </select>
     </div>
-    <button id="btn-registrar" onclick="procesarRegistro()" class="btn-main">ACTIVAR MI PASE</button>
+    <button id="btn-registrar" onclick="procesarRegistro()" class="btn-main">ENTRAR</button>
     <div id="form-msg" class="msg"></div>
   </div>
 </div>
 
 <div id="dashboard" class="container hidden">
-  <div id="captura-area">
-    <div class="card-pase" id="card-color">
-      <div id="qrcode"></div>
-      <h2 id="user-display-name" class="user-name"></h2>
-      <div id="user-display-prof" style="font-weight:700; opacity:0.9; font-size:13px; letter-spacing:1px;"></div>
-      <div id="user-display-uid" style="font-family:monospace; font-size:11px; margin-top:8px; opacity:0.6;"></div>
-    </div>
+  <div style="margin-bottom: 30px; text-align: center;">
+    <img src="assets/logo-light.jpg" style="width:140px;" onerror="this.style.display='none'">
   </div>
 
   <div class="menu-grid">
+    <div class="menu-item" onclick="abrirPase()" style="background: linear-gradient(135deg, #1565C8, #2E86F5); border:none;">
+      <span class="menu-icon">🎫</span>
+      <span class="menu-text" style="color:#fff;">Pase de Acceso</span>
+    </div>
     <div class="menu-item" onclick="abrirSeccion('programa')">
-      <span class="menu-icon">📅</span><span class="menu-text">Programa</span>
+      <span class="menu-icon">📅</span>
+      <span class="menu-text">Programa</span>
     </div>
     <div class="menu-item" onclick="abrirSeccion('conferencias')">
-      <span class="menu-icon">✅</span><span class="menu-text">Asistencia</span>
+      <span class="menu-icon">✅</span>
+      <span class="menu-text">Asistencia</span>
     </div>
     <div class="menu-item" onclick="abrirSeccion('talleres')">
-      <span class="menu-icon">🎓</span><span class="menu-text">Talleres Pago</span>
+      <span class="menu-icon">🎓</span>
+      <span class="menu-text">Talleres Pago</span>
     </div>
-    <div class="menu-item" onclick="descargarPase()">
-      <span class="menu-icon">📥</span><span class="menu-text">Guardar Pase</span>
+    <div class="menu-item" onclick="abrirSeccion('app')">
+      <span class="menu-icon">📲</span>
+      <span class="menu-text">Instalar App</span>
+    </div>
+    <div class="menu-item" onclick="cerrarSesion()">
+      <span class="menu-icon">👤</span>
+      <span class="menu-text">Cerrar Sesión</span>
     </div>
   </div>
 
-  <button class="btn-main" style="background:rgba(255,255,255,0.06); border:1px solid var(--line); margin-top:30px;" onclick="cerrarSesion()">CERRAR SESIÓN</button>
+  <div id="pase-modal" class="hidden">
+    <div style="text-align: right; margin-bottom: 20px;">
+        <button onclick="cerrarPase()" style="background:none; border:none; color:white; font-size:35px; cursor:pointer;">✕</button>
+    </div>
+    <div id="captura-area">
+      <div class="card-pase" id="card-color">
+        <div id="qrcode"></div>
+        <h2 id="user-display-name" class="user-name"></h2>
+        <div id="user-display-prof" style="font-weight:700; opacity:0.9;"></div>
+        <div id="user-display-uid" style="font-family:monospace; font-size:11px; margin-top:10px; opacity:0.6;"></div>
+      </div>
+    </div>
+    <button class="btn-main" onclick="descargarPase()" style="margin-top:25px;">GUARDAR EN GALERÍA</button>
+  </div>
 </div>
 
 <script>
-  // CONFIGURACIÓN CRÍTICA
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9dWj8Ea6OFJZSGiOHTMjNxNF-ZhojhJ49vBTXyzKFMO4Yv_ufRQLY5bEFEcJgwY7eyQ/exec";
   const STORAGE_KEY = "chp_session_v26";
 
@@ -117,39 +141,22 @@
     const btn = document.getElementById("btn-registrar");
 
     if(!nombre || !email || !prof) {
-      msg.className = "msg error"; msg.textContent = "Por favor, completa los campos obligatorios.";
+      msg.className = "msg error"; msg.textContent = "Completa los campos obligatorios.";
       return;
     }
 
-    btn.disabled = true; btn.textContent = "CONECTANDO...";
-
-    // UID para trazabilidad
+    btn.disabled = true; btn.textContent = "CARGANDO...";
     const uid = "CHP-" + Math.random().toString(36).substr(2, 5).toUpperCase();
-    
-    // Mapeo exacto para Google Sheet
-    const datos = { 
-      action: "register", 
-      nombre: nombre, 
-      email: email, 
-      telefono: telf, 
-      especialidad: prof, 
-      uid: uid 
-    };
+    const datos = { action: "register", nombre, email, telefono: telf, especialidad: prof, uid };
 
     try {
-      // Envío robusto al Apps Script
-      fetch(SCRIPT_URL, { 
-        method: "POST", 
-        mode: "no-cors", 
-        body: JSON.stringify(datos) 
-      });
-      
+      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(datos) });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(datos));
       mostrarDashboard(datos);
     } catch (e) {
-      msg.className = "msg error"; msg.textContent = "Error de red. Intenta de nuevo.";
+      msg.className = "msg error"; msg.textContent = "Error de conexión.";
     } finally {
-      btn.disabled = false; btn.textContent = "ACTIVAR MI PASE";
+      btn.disabled = false; btn.textContent = "ENTRAR";
     }
   }
 
@@ -159,44 +166,41 @@
     
     const card = document.getElementById("card-color");
     const p = user.especialidad.toLowerCase();
-    
     if(p.includes("enfermero")) card.style.background = "linear-gradient(135deg, #D4700A, #FF914D)";
     else if(p.includes("estudiante")) card.style.background = "linear-gradient(135deg, #1A7A4A, #2ECC71)";
-    else if(p.includes("otros")) card.style.background = "linear-gradient(135deg, #566573, #808B96)";
     else card.style.background = "linear-gradient(135deg, #1A5276, #2980B9)";
 
     document.getElementById("user-display-name").textContent = user.nombre.toUpperCase();
     document.getElementById("user-display-prof").textContent = user.especialidad.toUpperCase();
-    document.getElementById("user-display-uid").textContent = "ID ÚNICO: " + user.uid;
+    document.getElementById("user-display-uid").textContent = "ID: " + user.uid;
 
     document.getElementById("qrcode").innerHTML = "";
-    // QR con JSON para que el Staff lea todo sin internet
     new QRCode(document.getElementById("qrcode"), {
       text: JSON.stringify({uid:user.uid, nombre:user.nombre, especialidad:user.especialidad, telf:user.telefono}),
-      width: 160, height: 160
+      width: 180, height: 180
     });
   }
 
+  function abrirPase() { document.getElementById("pase-modal").classList.remove("hidden"); }
+  function cerrarPase() { document.getElementById("pase-modal").classList.add("hidden"); }
+
   function abrirSeccion(tipo) {
-    if(tipo === 'programa') window.open("TU_URL_PROGRAMA", "_blank");
-    if(tipo === 'talleres') window.open("TU_URL_TALLERES", "_blank");
-    if(tipo === 'conferencias') alert("Sección de asistencia disponible el día del evento.");
+    if(tipo === 'conferencias') alert("Validación de asistencia activa los días del evento.");
+    else if(tipo === 'app') alert("Instrucciones: Toca 'Compartir' y luego 'Añadir a pantalla de inicio'.");
+    else alert("Cargando sección...");
   }
 
   async function descargarPase() {
     const area = document.getElementById("captura-area");
     const canvas = await html2canvas(area);
     const link = document.createElement("a");
-    link.download = `Pase_CHP_${new Date().getTime()}.png`;
+    link.download = "Pase_CHP2026.png";
     link.href = canvas.toDataURL();
     link.click();
   }
 
   function cerrarSesion() {
-    if(confirm("¿Cerrar sesión? Tu registro ya está guardado.")) {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
+    if(confirm("¿Cerrar sesión?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
   }
 
   window.onload = () => {
