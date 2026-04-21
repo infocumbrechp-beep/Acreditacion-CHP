@@ -100,7 +100,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .now-card{background:#fff;border:2px solid var(--blue);border-radius:var(--radius-lg);margin:16px;overflow:hidden;box-shadow:var(--shadow-lg);}
 .now-header{background:var(--blue);padding:12px 16px;display:flex;align-items:center;gap:10px;}
 .now-dot{width:10px;height:10px;border-radius:50%;background:#4EF;flex-shrink:0;animation:pulse 1.4s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+@keyframes scrollSponsors{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 .now-header span{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#fff;}
 .now-body{padding:16px;}
 .now-time{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
@@ -492,24 +493,47 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     <div class="hero-date">📅 7 · 8 · 9 de mayo de 2026</div>
     <h1>Cumbre Internacional<br>Heridas y Piel</h1>
     <p class="hero-sub">Nivel Eventos · C.C. Líder · Caracas</p>
-    <!-- SPONSORS — reemplazar src con URLs reales de los logos -->
-    <div id="sponsors-strip" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px;margin-bottom:4px;padding:10px 16px;background:rgba(255,255,255,0.1);border-radius:12px;border:1px solid rgba(255,255,255,0.2);">
-      <div style="font-size:9px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px;width:100%;text-align:center;margin-bottom:4px;">Aval científico · Sponsors</div>
-      <!-- Sponsor placeholder 1 — sustituir img src por logo real -->
-      <div class="sponsor-slot" onclick="" title="Sponsor">
-        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
-      </div>
-      <!-- Sponsor placeholder 2 -->
-      <div class="sponsor-slot" onclick="" title="Sponsor">
-        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
-      </div>
-      <!-- Sponsor placeholder 3 -->
-      <div class="sponsor-slot" onclick="" title="Sponsor">
-        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
-      </div>
-      <!-- Sponsor placeholder 4 -->
-      <div class="sponsor-slot" onclick="" title="Sponsor">
-        <div style="width:56px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;border:1px dashed rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.5);">Logo</div>
+    <!-- CARRUSEL DE PATROCINADORES -->
+    <div style="width:100%;overflow:hidden;margin-top:16px;margin-bottom:4px;">
+      <div style="font-size:9px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1.5px;text-align:center;margin-bottom:8px;">Patrocinadores</div>
+      <div class="sponsors-carousel-wrap" style="overflow:hidden;width:100%;position:relative;">
+        <div class="sponsors-track" id="sponsors-track" style="display:flex;gap:14px;align-items:center;width:max-content;animation:scrollSponsors 28s linear infinite;">
+          <img src="https://drive.google.com/uc?export=view&id=1rIhEGEbtDdW1oP2osK04Fi7oDMWIqFv-" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1G9ai3uKyCxEe2Y-V5Dx5AlMa4UisrNQQ" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1QouoS4RxqrQ8-anay_XmDSXBQ-oHqYgs" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=10_lGeLF7sTnlXlXHZDFe_gS1hRcEZvsk" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1K1vytGtDNPmkwNrE3wXNCtmhuQ7mK-SB" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1zMFHOfptqdTLQviJLEqClLvv8Tf9Zyyx" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1scXt93csBwdtAPbFXrvGgKWZiuodLHYT" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1Z3alf_IEWWlbPSKitLVBEU_NJ9n8DKGa" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1u8gK08XhXFtUN5McEXA9wfwIwLHmQ3AZ" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1Lv1fDZzX2IphsUXc0EtlctEZUJ_1Kvn3" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1YqrGmA1YUGzASGJfK2SBBnKKM1JQyFmm" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1_053HOJI3vQ82tKeqXXUAHVoe4_aOoyn" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="Diprovet">
+          <img src="https://drive.google.com/uc?export=view&id=1uygCyxaXXnaW-Vv9RKJKWw-5T4cJKaO0" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="Inversiones Pro-Médica">
+          <img src="https://drive.google.com/uc?export=view&id=1kQdWJsNxu1hIQA4cGrHp6l_UZHG8_RFx" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="Critikon">
+          <img src="https://drive.google.com/uc?export=view&id=1yGtKfAVoWwCSDuE43WdIhMtH5r2bJSuo" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="Inmuno-Lab">
+          <img src="https://drive.google.com/uc?export=view&id=1t-S7JuT9l7L5fi8FS7qeyYP4m-1yvZj9" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="B. Braun">
+          <img src="https://drive.google.com/uc?export=view&id=1-2c3Oz4KKPxmRVKOG2gXNHK53yZKlpCW" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'" title="Zion Medical">
+          <!-- Duplicado para loop infinito -->
+          <img src="https://drive.google.com/uc?export=view&id=1rIhEGEbtDdW1oP2osK04Fi7oDMWIqFv-" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1G9ai3uKyCxEe2Y-V5Dx5AlMa4UisrNQQ" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1QouoS4RxqrQ8-anay_XmDSXBQ-oHqYgs" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=10_lGeLF7sTnlXlXHZDFe_gS1hRcEZvsk" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1K1vytGtDNPmkwNrE3wXNCtmhuQ7mK-SB" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1zMFHOfptqdTLQviJLEqClLvv8Tf9Zyyx" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1scXt93csBwdtAPbFXrvGgKWZiuodLHYT" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1Z3alf_IEWWlbPSKitLVBEU_NJ9n8DKGa" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1u8gK08XhXFtUN5McEXA9wfwIwLHmQ3AZ" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1Lv1fDZzX2IphsUXc0EtlctEZUJ_1Kvn3" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1YqrGmA1YUGzASGJfK2SBBnKKM1JQyFmm" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1_053HOJI3vQ82tKeqXXUAHVoe4_aOoyn" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1uygCyxaXXnaW-Vv9RKJKWw-5T4cJKaO0" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1kQdWJsNxu1hIQA4cGrHp6l_UZHG8_RFx" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1yGtKfAVoWwCSDuE43WdIhMtH5r2bJSuo" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1t-S7JuT9l7L5fi8FS7qeyYP4m-1yvZj9" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+          <img src="https://drive.google.com/uc?export=view&id=1-2c3Oz4KKPxmRVKOG2gXNHK53yZKlpCW" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;flex-shrink:0;" onerror="this.style.display='none'">
+        </div>
       </div>
     </div>
     <!-- Contador -->
@@ -538,7 +562,9 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="section-label">Bienvenida</div>
   <div class="video-card">
     <div class="video-card-header"><div class="vc-icon" style="background:#EBF5FB;">🎬</div><div><div class="vc-title">Video de bienvenida</div><div class="vc-sub">Mensaje de los organizadores · ~90 seg</div></div></div>
-    <div class="video-thumb" onclick="alert('📹 Pegar aquí el link de YouTube del video de bienvenida')"><div class="play-btn">▶</div><p>Toca para ver el video de bienvenida</p></div>
+    <div class="video-thumb" style="cursor:default;padding:0;overflow:hidden;">
+      <iframe src="https://www.youtube.com/embed/QgC3tOCnZGU" style="width:100%;aspect-ratio:9/16;max-height:340px;border:none;" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+    </div>
   </div>
   <div class="section-label">Información general</div>
   <div class="card">
@@ -831,7 +857,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   /* ══════════════════════════════════════════════════════
      CONFIGURACIÓN
   ══════════════════════════════════════════════════════ */
-  var GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby9dWj8Ea6OFJZSGiOHTMjNxNF-ZhojhJ49vBTXyzKFMO4Yv_ufRQLY5bEFEcJgwY7eyQ/exec';
+  var GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzAVoeDUqDkMeWVpeqQ5VTAHJES_tzzBfJ37sTaLPQpRBVk1FHeeauCMEfrvQY8xLqe/exec';
   var APP_URL = 'https://infocumbrechp-beep.github.io/Acreditacion-CHP/';
 
   var HOY_AUTO = (function() {
@@ -1120,14 +1146,16 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     guardarDatosAsistente(datos);
     datosAsistente = datos;
 
-    // Enviar a Google Sheets
+    // Enviar a Google Sheets — enrutar según profesión
+    var esEnf = getDiasAutorizados(esp).join('').indexOf('Día 1') !== -1 && getDiasAutorizados(esp).length === 1;
     enviarASheets('registro_asistente', {
       nombre: datos.nombre,
       apellido: datos.apellido,
       nombre_completo: datos.nombreCompleto,
       telefono: datos.telefono,
       email: datos.email,
-      especialidad: datos.especialidad
+      especialidad: datos.especialidad,
+      hoja_destino: esEnf ? 'Participantes 1' : 'Participantes 2'
     });
 
     // Ir a Mi QR directamente
@@ -1680,6 +1708,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       btn.classList.add('inscrito');
       // Enviar a Sheets
       var conf = CONF_SCHEDULE[confId] || {};
+      var esEnfConf = datosAsistente && getDiasAutorizados(datosAsistente.especialidad).join('').indexOf('Día 1') !== -1 && getDiasAutorizados(datosAsistente.especialidad).length === 1;
       enviarASheets('preinscripcion_conferencia', {
         conf_id: confId,
         conf_nombre: conf.nombre || confId,
@@ -1687,7 +1716,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
         conf_hora: conf.hora || '',
         nombre_completo: datosAsistente.nombreCompleto,
         email: datosAsistente.email,
-        especialidad: datosAsistente.especialidad
+        especialidad: datosAsistente.especialidad,
+        hoja_destino: esEnfConf ? 'CONFERENCIA_PLANIFICADA 1' : 'CONFERENCIA_PLANIFICADA 2'
       });
     } else {
       lista.splice(idx, 1);
