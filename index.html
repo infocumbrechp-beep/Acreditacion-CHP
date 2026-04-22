@@ -1755,10 +1755,22 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   /* ── Instalación PWA ── */
   function abrirInstall() {
     var overlay = document.getElementById('install-overlay');
-    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    var isAndroid = /Android/.test(navigator.userAgent);
-    document.getElementById('install-ios').style.display = (!isAndroid) ? 'block' : 'none';
-    document.getElementById('install-android').style.display = isAndroid ? 'block' : 'none';
+    var ua = navigator.userAgent;
+    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    var isAndroid = /Android/.test(ua);
+
+    document.getElementById('install-ios').style.display = 'none';
+    document.getElementById('install-android').style.display = 'none';
+    document.getElementById('install-otro').style.display = 'none';
+
+    if (isIOS) {
+      document.getElementById('install-ios').style.display = 'block';
+    } else if (isAndroid) {
+      document.getElementById('install-android').style.display = 'block';
+    } else {
+      document.getElementById('install-otro').style.display = 'block';
+    }
+
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
@@ -1767,6 +1779,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     document.getElementById('install-overlay').classList.remove('active');
     document.body.style.overflow = '';
   }
+  window.cerrarInstall = cerrarInstall;
+  window.abrirInstall = abrirInstall;
   // Video slider
   var videoActual = 0;
   window.cambiarVideo = function(idx) {
@@ -1970,55 +1984,117 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="install-sheet" onclick="event.stopPropagation()">
     <div class="install-handle"></div>
 
-    <!-- CHROME — único navegador recomendado -->
-    <div id="install-ios">
-      <div style="text-align:center;">
-        <div class="install-badge" style="background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;">🌐 Solo en Google Chrome</div>
+    <!-- iPhone / iPad — Safari -->
+    <div id="install-ios" style="display:none;">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div class="install-badge" style="background:#EBF5FB;color:#1565C8;border:1px solid #AED6F1;">🍎 iPhone / iPad</div>
       </div>
-      <div class="install-title">Guarda la app en tu teléfono</div>
-      <div class="install-sub">Usa <strong>Google Chrome</strong> para una experiencia sin problemas</div>
+      <div class="install-title">Guarda la app en tu iPhone</div>
+      <div class="install-sub">Sigue estos pasos en <strong>Safari</strong></div>
 
-      <!-- Alerta: abrir en Chrome primero -->
-      <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
-        <p style="font-size:12px;color:#E65100;margin:0;">⚠️ <strong>Antes de comenzar:</strong> Si abriste este link desde WhatsApp, Instagram u otro app, cópialo y ábrelo directamente en <strong>Google Chrome</strong>.</p>
+      <!-- Alerta WhatsApp -->
+      <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <p style="font-size:12px;color:#E65100;margin:0;">⚠️ <strong>¿Abriste el link desde WhatsApp?</strong><br>Toca los <strong>3 puntos ···</strong> arriba a la derecha → <strong>"Abrir en Safari"</strong>. Luego sigue los pasos de abajo.</p>
       </div>
 
       <div class="install-step">
         <div class="install-step-num">1</div>
         <div class="install-step-text">
-          <strong>Abre el menú de Chrome</strong>
-          <span>Toca los <strong>3 puntos ⋮</strong> en la esquina superior derecha de Chrome</span>
+          <strong>Toca el botón de Compartir</strong>
+          <span>Es el ícono de <strong>📤 cuadrado con flecha hacia arriba</strong> — está en la barra inferior de Safari</span>
         </div>
       </div>
       <div class="install-step">
         <div class="install-step-num">2</div>
         <div class="install-step-text">
-          <strong>Selecciona "Añadir a pantalla de inicio"</strong>
+          <strong>Desplázate y toca "Añadir a pantalla de inicio"</strong>
+          <span>Busca el ícono de <strong>➕ cuadrado con un más</strong> en el menú que se despliega</span>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-text">
+          <strong>Toca "Añadir" en la esquina superior derecha</strong>
+          <span>El nombre ya viene listo — solo confirma tocando <strong>Añadir</strong></span>
+        </div>
+      </div>
+      <div class="install-step" style="border-bottom:none;">
+        <div class="install-step-num">✅</div>
+        <div class="install-step-text">
+          <strong>¡Listo! Busca el ícono de la Cumbre en tu pantalla de inicio</strong>
+          <span>Ábrela desde ahí — funciona incluso sin internet</span>
+        </div>
+      </div>
+      <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:12px 14px;margin-top:12px;">
+        <p style="font-size:12px;color:#1A5E30;margin:0;">💡 <strong>¿No ves "Añadir a pantalla de inicio"?</strong> Asegúrate de estar en <strong>Safari</strong> — no funciona en Chrome ni en otros navegadores de iPhone.</p>
+      </div>
+    </div>
+
+    <!-- Android — Chrome -->
+    <div id="install-android" style="display:none;">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div class="install-badge" style="background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;">🤖 Android</div>
+      </div>
+      <div class="install-title">Guarda la app en tu Android</div>
+      <div class="install-sub">Sigue estos pasos en <strong>Google Chrome</strong></div>
+
+      <!-- Alerta WhatsApp -->
+      <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <p style="font-size:12px;color:#E65100;margin:0;">⚠️ <strong>¿Abriste el link desde WhatsApp?</strong><br>Toca los <strong>3 puntos ⋮</strong> arriba a la derecha → <strong>"Abrir en Chrome"</strong>. Luego sigue los pasos de abajo.</p>
+      </div>
+
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-text">
+          <strong>Toca los 3 puntos ⋮ en Chrome</strong>
+          <span>Están en la esquina superior derecha del navegador</span>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-text">
+          <strong>Toca "Añadir a pantalla de inicio"</strong>
           <span>También puede aparecer como <strong>"Instalar aplicación"</strong> — ambas opciones funcionan igual</span>
         </div>
       </div>
       <div class="install-step">
         <div class="install-step-num">3</div>
         <div class="install-step-text">
-          <strong>Confirma tocando "Añadir"</strong>
+          <strong>Toca "Añadir" para confirmar</strong>
           <span>La app aparecerá en tu pantalla de inicio con el ícono de la Cumbre CHP</span>
         </div>
       </div>
       <div class="install-step" style="border-bottom:none;">
         <div class="install-step-num">✅</div>
         <div class="install-step-text">
-          <strong>¡Listo! Abre la app desde tu pantalla de inicio</strong>
-          <span>Funciona incluso sin internet gracias a la instalación local</span>
+          <strong>¡Listo! Ábrela desde tu pantalla de inicio</strong>
+          <span>Funciona incluso sin internet</span>
         </div>
       </div>
-
-      <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:12px 14px;margin-top:4px;">
-        <p style="font-size:12px;color:#1A5E30;margin:0;">💡 <strong>¿No ves la opción?</strong> Asegúrate de estar usando la última versión de <strong>Google Chrome</strong>. En algunos Android Chrome muestra un banner azul en la parte inferior — tócalo directamente.</p>
+      <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:12px 14px;margin-top:12px;">
+        <p style="font-size:12px;color:#1A5E30;margin:0;">💡 <strong>¿Ves un banner azul en la parte inferior de Chrome?</strong> Tócalo directamente — es un atajo para instalar la app más rápido.</p>
       </div>
     </div>
 
-    <!-- Android se oculta — solo Chrome -->
-    <div id="install-android" style="display:none;"></div>
+    <!-- Fallback — navegador no reconocido -->
+    <div id="install-otro" style="display:none;">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div class="install-badge" style="background:#FEF9E7;color:#7D6608;border:1px solid #F0D58C;">📱 Guardar app</div>
+      </div>
+      <div class="install-title">Guarda la app en tu teléfono</div>
+      <div class="install-sub">Para guardar la app necesitas abrirla en el navegador de tu teléfono</div>
+      <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:14px;margin-bottom:16px;">
+        <p style="font-size:13px;color:#E65100;margin:0 0 8px;font-weight:700;">📋 Copia este link y ábrelo en tu navegador:</p>
+        <p style="font-size:12px;color:#5D4037;margin:0;word-break:break-all;background:#fff;padding:8px;border-radius:6px;">bit.ly/cumbre-chp-2026</p>
+      </div>
+      <div class="install-step" style="border-bottom:none;">
+        <div class="install-step-num">💡</div>
+        <div class="install-step-text">
+          <strong>iPhone → usar Safari · Android → usar Chrome</strong>
+          <span>Una vez en el navegador correcto, toca el botón "Guardar app" de nuevo</span>
+        </div>
+      </div>
+    </div>
 
     <button class="install-close" onclick="cerrarInstall()">Entendido ✓</button>
   </div>
