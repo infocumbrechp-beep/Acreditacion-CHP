@@ -898,9 +898,9 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="section-label">Contacto</div>
   <div class="card" style="margin:0 16px 12px;">
     <div class="contact-item"><div class="c-icon" style="background:#E7F8EE;">📱</div><div><div class="c-lbl">WhatsApp</div><div class="c-val">+58 414-2577408</div></div></div>
-    <div class="contact-item"><div class="c-icon" style="background:#EBF5FB;">📧</div><div><div class="c-lbl">Correo</div><div class="c-val">comercial@cumbrechp.org</div></div></div>
-    <div class="contact-item"><div class="c-icon" style="background:#FEF9E7;">🌐</div><div><div class="c-lbl">Web</div><div class="c-val">cumbrechp.org</div></div></div>
-    <div class="contact-item"><div class="c-icon" style="background:#FDEDEC;">📸</div><div><div class="c-lbl">Instagram</div><div class="c-val">@cumbreinternacionalchp</div></div></div>
+    <div class="contact-item"><div class="c-icon" style="background:#EBF5FB;">📧</div><div><div class="c-lbl">Correo</div><div class="c-val" style="color:var(--blue);cursor:pointer;" onclick="window.open('mailto:comercial@cumbrechp.org','_blank')">comercial@cumbrechp.org</div></div></div>
+    <div class="contact-item"><div class="c-icon" style="background:#FEF9E7;">🌐</div><div><div class="c-lbl">Web</div><div class="c-val" style="color:var(--blue);cursor:pointer;" onclick="window.open('https://cumbrechp.org','_blank')">cumbrechp.org ↗</div></div></div>
+    <div class="contact-item"><div class="c-icon" style="background:#FDEDEC;">📸</div><div><div class="c-lbl">Instagram</div><div class="c-val" style="color:var(--blue);cursor:pointer;" onclick="window.open('https://instagram.com/cumbreinternacionalchp','_blank')">@cumbreinternacionalchp ↗</div></div></div>
   </div>
 </div>
 
@@ -1936,6 +1936,22 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   window.abrirInstall = abrirInstall;
   window.showPage = showPage;
   window.inscribirTaller = inscribirTaller;
+
+  // Fix iOS Safari: touchend para divs con onclick que usan showPage
+  document.addEventListener('touchend', function(e) {
+    var el = e.target;
+    // Buscar el elemento con onclick subiendo hasta 3 niveles
+    for (var i = 0; i < 3; i++) {
+      if (!el) break;
+      var oc = el.getAttribute && el.getAttribute('onclick');
+      if (oc && (oc.indexOf('showPage') !== -1 || oc.indexOf('inscribirTaller') !== -1 || oc.indexOf('window.open') !== -1 || oc.indexOf('abrirInstall') !== -1 || oc.indexOf('abrirEditarNombre') !== -1)) {
+        e.preventDefault();
+        try { eval(oc); } catch(err) {}
+        break;
+      }
+      el = el.parentElement;
+    }
+  }, { passive: false });
   // Video slider
   var videoActual = 0;
   window.cambiarVideo = function(idx) {
