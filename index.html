@@ -1766,7 +1766,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       tab.addEventListener('click', function(e){ e.preventDefault(); showDay(tab.getAttribute('data-day')); });
       tab.addEventListener('touchend', function(e){ e.preventDefault(); showDay(tab.getAttribute('data-day')); });
     });
-    document.querySelectorAll('.quick-btn').forEach(function(btn){
+    document.querySelectorAll('.quick-btn, .now-btn[data-page]').forEach(function(btn){
       btn.addEventListener('click', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
       btn.addEventListener('touchend', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
     });
