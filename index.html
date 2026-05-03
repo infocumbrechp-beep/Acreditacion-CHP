@@ -499,7 +499,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     <!-- CARRUSEL DE PATROCINADORES -->
     <div style="width:100%;overflow:hidden;margin-top:16px;margin-bottom:4px;">
       <div style="font-size:9px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1.5px;text-align:center;margin-bottom:8px;">Patrocinadores</div>
-      <div class="sponsors-carousel-wrap" style="overflow:hidden;width:100%;position:relative;">
+      <div class="sponsors-carousel-wrap" style="overflow:hidden;width:100%;position:relative;background:#fff;border-radius:10px;padding:8px 0;">
         <div class="sponsors-track" id="sponsors-track" style="display:flex;gap:14px;align-items:center;width:max-content;animation:scrollSponsors 28s linear infinite;">
           <img src="https://infocumbrechp-beep.github.io/Acreditacion-CHP/sevolab.jpg" style="height:40px;width:auto;object-fit:contain;opacity:0.9;flex-shrink:0;" onerror="this.style.display='none'" title="sevolab">
           <img src="https://infocumbrechp-beep.github.io/Acreditacion-CHP/Saas.jpg" style="height:40px;width:auto;object-fit:contain;opacity:0.9;flex-shrink:0;" onerror="this.style.display='none'" title="saas">
@@ -566,12 +566,12 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     <div id="hero-countdown" style="display:inline-flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;"></div>
   </div>
   <div class="section-label">Ahora mismo</div>
-  <div class="now-card">
-    <div class="now-header"><div class="now-dot"></div><span>EN VIVO — DÍA 2 · 10:15 AM</span></div>
+  <div class="now-card" id="now-card-wrap">
+    <div class="now-header"><div class="now-dot"></div><span id="now-header-txt">CARGANDO...</span></div>
     <div class="now-body">
-      <div class="now-time">10:15 – 10:35 AM · Sala Principal</div>
-      <div class="now-title">Investigación e Innovación en el Cuidado de Heridas. Nuevos Materiales</div>
-      <div class="now-speaker">👩‍⚕️ Dra. Verónica de la Fuente · 🇪🇸 España</div>
+      <div class="now-time" id="now-time-txt"></div>
+      <div class="now-title" id="now-title-txt"></div>
+      <div class="now-speaker" id="now-speaker-txt"></div>
       <div class="now-cta">
         <div class="now-btn primary" id="go-programa">📅 Ver programa completo</div>
         <div class="now-btn secondary" data-page="miqr" style="background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.4);">🎫 Mi QR</div>
@@ -1639,6 +1639,105 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     el.addEventListener('touchend', function(e){ e.preventDefault(); fn(); });
   }
 
+
+  /* ── SECCIÓN EN VIVO ── */
+  function actualizarNowCard() {
+    var ahora = new Date();
+    var y = ahora.getFullYear(), m = ahora.getMonth()+1, d = ahora.getDate();
+    var hh = ahora.getHours(), mm = ahora.getMinutes();
+    var minActual = hh * 60 + mm;
+
+    // Solo activo durante los días del evento
+    var esDiaEvento = (y===2026 && m===5 && (d===7||d===8||d===9));
+
+    var headerEl = document.getElementById('now-header-txt');
+    var timeEl = document.getElementById('now-time-txt');
+    var titleEl = document.getElementById('now-title-txt');
+    var speakerEl = document.getElementById('now-speaker-txt');
+    if (!headerEl) return;
+
+    if (!esDiaEvento) {
+      // Antes o después del evento — mostrar próxima conferencia
+      var ids = Object.keys(CONF_SCHEDULE);
+      var proxima = null;
+      for (var i=0; i<ids.length; i++) {
+        var c = CONF_SCHEDULE[ids[i]];
+        var dt = new Date(c.fecha + 'T' + c.hora + ':00');
+        if (dt > ahora) { proxima = c; break; }
+      }
+      if (proxima) {
+        headerEl.textContent = 'PRÓXIMAMENTE — ' + proxima.dia.toUpperCase();
+        timeEl.textContent = proxima.hora + ' AM · Sala Principal';
+        titleEl.textContent = proxima.nombre;
+        speakerEl.textContent = '📅 ' + new Date(proxima.fecha + 'T12:00:00').toLocaleDateString('es-VE', {weekday:'long', day:'numeric', month:'long'});
+      } else {
+        headerEl.textContent = 'CUMBRE CHP 2026 · FINALIZADA';
+        timeEl.textContent = '';
+        titleEl.textContent = 'Gracias por participar en la Cumbre Internacional CHP 2026';
+        speakerEl.textContent = '🎉 Nos vemos en la próxima edición';
+      }
+      return;
+    }
+
+    // Durante el evento — buscar conferencia activa
+    var fechaHoy = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    var diaLabel = d===7 ? 'Día 1' : d===8 ? 'Día 2' : 'Día 3';
+    var diaNum = d===7 ? 1 : d===8 ? 2 : 3;
+
+    // Construir lista de conferencias de hoy ordenadas por hora
+    var hoy = [];
+    Object.keys(CONF_SCHEDULE).forEach(function(id) {
+      var c = CONF_SCHEDULE[id];
+      if (c.fecha === fechaHoy) {
+        var partes = c.hora.split(':');
+        var minInicio = parseInt(partes[0])*60 + parseInt(partes[1]);
+        hoy.push({ id:id, conf:c, minInicio:minInicio });
+      }
+    });
+    hoy.sort(function(a,b){ return a.minInicio - b.minInicio; });
+
+    // Duración estándar 20 min por conferencia
+    var activa = null;
+    var proxima = null;
+    for (var i=0; i<hoy.length; i++) {
+      var item = hoy[i];
+      var fin = (i+1 < hoy.length) ? hoy[i+1].minInicio : item.minInicio + 25;
+      if (minActual >= item.minInicio && minActual < fin) {
+        activa = item;
+        proxima = (i+1 < hoy.length) ? hoy[i+1] : null;
+        break;
+      }
+      if (minActual < item.minInicio) {
+        proxima = item;
+        break;
+      }
+    }
+
+    if (activa) {
+      var hIni = Math.floor(activa.minInicio/60), mIni = activa.minInicio%60;
+      var sigItem = hoy[hoy.indexOf(activa)+1];
+      var hFin = sigItem ? Math.floor(sigItem.minInicio/60) : hIni;
+      var mFin = sigItem ? sigItem.minInicio%60 : mIni+20;
+      var ampm = hIni < 12 ? 'AM' : 'PM';
+      headerEl.textContent = 'EN VIVO — ' + diaLabel.toUpperCase() + ' · ' + String(hIni).padStart(2,'0') + ':' + String(mIni).padStart(2,'0') + ' ' + ampm;
+      timeEl.textContent = String(hIni).padStart(2,'0') + ':' + String(mIni).padStart(2,'0') + ' – ' + String(hFin).padStart(2,'0') + ':' + String(mFin).padStart(2,'0') + ' · Sala Principal';
+      titleEl.textContent = activa.conf.nombre;
+      speakerEl.textContent = '📍 ' + diaLabel + ' · Cumbre CHP 2026';
+    } else if (proxima) {
+      var hP = Math.floor(proxima.minInicio/60), mP = proxima.minInicio%60;
+      var ampmP = hP < 12 ? 'AM' : 'PM';
+      headerEl.textContent = 'PRÓXIMO — ' + diaLabel.toUpperCase() + ' · ' + String(hP).padStart(2,'0') + ':' + String(mP).padStart(2,'0') + ' ' + ampmP;
+      timeEl.textContent = String(hP).padStart(2,'0') + ':' + String(mP).padStart(2,'0') + ' · Sala Principal';
+      titleEl.textContent = proxima.conf.nombre;
+      speakerEl.textContent = '⏳ Comienza en ' + (proxima.minInicio - minActual) + ' minutos';
+    } else {
+      headerEl.textContent = diaLabel.toUpperCase() + ' · JORNADA FINALIZADA';
+      timeEl.textContent = '';
+      titleEl.textContent = 'Las conferencias de hoy han concluido';
+      speakerEl.textContent = '🎉 Gracias por participar · ' + diaLabel;
+    }
+  }
+
   function bindAll() {
     document.querySelectorAll('.nav-btn').forEach(function(btn){
       btn.addEventListener('click', function(e){ e.preventDefault(); showPage(btn.getAttribute('data-page')); });
@@ -1693,9 +1792,9 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   window.abrirInstall = abrirInstall;
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100); });
+    document.addEventListener('DOMContentLoaded', function(){ bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000); });
   } else {
-    bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100);
+    bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000);
   }
 
 
