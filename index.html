@@ -360,7 +360,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 #qr-canvas-personal {
   border-radius:12px;
   display:block; margin:0 auto 20px;
-  max-width:220px; width:220px; height:220px;
+  width:220px; height:220px;
+  overflow:hidden;
 }
 .qr-dias-badge {
   display:inline-flex; align-items:center; gap:8px;
@@ -814,8 +815,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="qr-card">
     <div class="qr-nombre" id="qr-nombre-display">—</div>
     <div class="qr-especialidad" id="qr-prof-display">—</div>
+    <div id="qr-canvas-personal"></div>
     <div id="qr-dias-badge-container"></div>
-    <canvas id="qr-canvas-personal"></canvas>
     <!-- Texto brillo al máximo -->
     <div style="margin:14px 0 4px;padding:10px 16px;background:#FFF3E0;border:2px solid #FF8F00;border-radius:12px;text-align:center;">
       <p style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#E65100;margin:0;line-height:1.3;">
