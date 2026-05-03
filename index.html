@@ -835,7 +835,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 
   <!-- Botón editar datos -->
   <div style="margin:0 16px 24px;text-align:center;">
-    <div onclick="editarDatosRegistro()" style="font-size:13px;color:var(--text-muted);cursor:pointer;padding:12px;">
+    <div onclick="editarDatosRegistro()" style="font-size:11px;color:var(--text-muted);cursor:pointer;padding:8px;opacity:0.6;">
       ✏️ Editar mis datos
     </div>
   </div>
@@ -1012,7 +1012,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function editarDatosRegistro() {
-    if (!confirm('¿Deseas editar tus datos? Tendrás que volver a completar el formulario.')) return;
+    if (!confirm('⚠️ ATENCIÓN: Esto borrará tu registro.\n\nTendrás que completar el formulario de nuevo para recuperar tu QR.\n\n¿Estás seguro?')) return;
     try { localStorage.removeItem('chp_asistente_v1'); } catch(e) {}
     datosAsistente = null;
     // Limpiar formulario
