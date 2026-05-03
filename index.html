@@ -1647,7 +1647,6 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     var hh = ahora.getHours(), mm = ahora.getMinutes();
     var minActual = hh * 60 + mm;
 
-    // Solo activo durante los días del evento
     var esDiaEvento = (y===2026 && m===5 && (d===7||d===8||d===9));
 
     var headerEl = document.getElementById('now-header-txt');
@@ -1656,18 +1655,29 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     var speakerEl = document.getElementById('now-speaker-txt');
     if (!headerEl) return;
 
+    // Determinar días autorizados del asistente (si está registrado)
+    var diasAuth = datosAsistente ? getDiasAutorizados(datosAsistente.especialidad) : ['Día 1','Día 2','Día 3'];
+
+    // Filtro de conferencias según días autorizados
+    function confAutorizada(c) {
+      return diasAuth.indexOf(c.dia) !== -1;
+    }
+
     if (!esDiaEvento) {
-      // Antes o después del evento — mostrar próxima conferencia
-      var ids = Object.keys(CONF_SCHEDULE);
+      // Antes o después del evento — mostrar próxima conferencia del pase
+      var ids = Object.keys(CONF_SCHEDULE).sort(function(a,b){
+        return (CONF_SCHEDULE[a].fecha+CONF_SCHEDULE[a].hora).localeCompare(CONF_SCHEDULE[b].fecha+CONF_SCHEDULE[b].hora);
+      });
       var proxima = null;
       for (var i=0; i<ids.length; i++) {
         var c = CONF_SCHEDULE[ids[i]];
+        if (!confAutorizada(c)) continue;
         var dt = new Date(c.fecha + 'T' + c.hora + ':00');
         if (dt > ahora) { proxima = c; break; }
       }
       if (proxima) {
         headerEl.textContent = 'PRÓXIMAMENTE — ' + proxima.dia.toUpperCase();
-        timeEl.textContent = proxima.hora + ' AM · Sala Principal';
+        timeEl.textContent = proxima.hora + ' · Sala Principal';
         titleEl.textContent = proxima.nombre;
         speakerEl.textContent = '📅 ' + new Date(proxima.fecha + 'T12:00:00').toLocaleDateString('es-VE', {weekday:'long', day:'numeric', month:'long'});
       } else {
@@ -1679,16 +1689,25 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       return;
     }
 
-    // Durante el evento — buscar conferencia activa
-    var fechaHoy = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    // Durante el evento — verificar si hoy es día autorizado para el asistente
     var diaLabel = d===7 ? 'Día 1' : d===8 ? 'Día 2' : 'Día 3';
-    var diaNum = d===7 ? 1 : d===8 ? 2 : 3;
+    var fechaHoy = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
 
-    // Construir lista de conferencias de hoy ordenadas por hora
+    // Si hoy no es día autorizado para este asistente
+    if (diasAuth.indexOf(diaLabel) === -1) {
+      var otrosDias = diasAuth.filter(function(x){ return x !== diaLabel; });
+      headerEl.textContent = 'HOY NO ES TU DÍA';
+      timeEl.textContent = '';
+      titleEl.textContent = 'Tu pase es para ' + otrosDias.join(' y ');
+      speakerEl.textContent = '📅 Consulta el programa de tu día en la pestaña Programa';
+      return;
+    }
+
+    // Construir lista de conferencias de hoy (solo días autorizados) ordenadas por hora
     var hoy = [];
     Object.keys(CONF_SCHEDULE).forEach(function(id) {
       var c = CONF_SCHEDULE[id];
-      if (c.fecha === fechaHoy) {
+      if (c.fecha === fechaHoy && confAutorizada(c)) {
         var partes = c.hora.split(':');
         var minInicio = parseInt(partes[0])*60 + parseInt(partes[1]);
         hoy.push({ id:id, conf:c, minInicio:minInicio });
@@ -1829,6 +1848,16 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     if (!datosAsistente) {
       alert('⚠️ Primero completa tu registro para guardar conferencias en tu agenda.');
       return;
+    }
+    // Validar que la conferencia corresponda al día autorizado
+    var confData = CONF_SCHEDULE[confId];
+    if (confData) {
+      var diasAuth = getDiasAutorizados(datosAsistente.especialidad);
+      if (diasAuth.indexOf(confData.dia) === -1) {
+        alert('⚠️ Esta conferencia es del ' + confData.dia + '.
+Tu pase solo incluye: ' + diasAuth.join(' y ') + '.');
+        return;
+      }
     }
     var lista = loadPreinscripciones();
     var idx = lista.indexOf(confId);
