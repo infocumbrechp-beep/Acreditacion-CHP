@@ -191,7 +191,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .post-banner h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#1A5276;margin-bottom:8px;}
 .post-banner p{font-size:13px;color:var(--text-soft);margin-bottom:14px;}
 /* Tracking */
-.tracking-success{margin:16px;background:var(--green-bg);border:2px solid var(--green);border-radius:var(--radius-lg);padding:24px;text-align:center;animation:fadeIn 0.3s ease;}.tracking-success.hidden{display:none !important;}.tracking-area-visible{display:block !important;}
+.tracking-success{margin:16px;background:var(--green-bg);border:2px solid var(--green);border-radius:var(--radius-lg);padding:24px;text-align:center;animation:fadeIn 0.3s ease;}.tracking-success.hidden{display:none !important;}.tracking-area-hidden{display:none !important;}
 .tracking-success .ts-icon{font-size:48px;margin-bottom:10px;}
 .tracking-success h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;}
 .tracking-success p{font-size:13px;color:var(--text-soft);}
@@ -1465,8 +1465,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       else { trackOk.style.background='var(--rose-bg)'; trackOk.style.border='2px solid var(--rose)'; icon.textContent='❌'; titleEl.textContent=titulo; titleEl.style.color='var(--rose)'; }
       // Mostrar resultado y ocultar área
       trackOk.classList.remove('hidden');
-      trackArea.classList.add('tracking-area-visible');
-      trackArea.style.display = 'none';
+      trackArea.classList.add('tracking-area-hidden');
     }
 
     if (!conf) { mostrar('QR inválido','Esta conferencia no existe en el sistema.','error'); updateProgress(); return; }
@@ -1511,7 +1510,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
     if (ok)   ok.classList.add('hidden');
-    if (area) { area.classList.remove('tracking-area-visible'); area.style.display = 'block'; }
+    if (area) area.classList.remove('tracking-area-hidden');
     updateProgress();
   }
 
@@ -1647,7 +1646,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
     if (ok)   ok.classList.add('hidden');
-    if (area) area.classList.remove('tracking-area-visible');
+    if (area) area.classList.remove('tracking-area-hidden');
     updateProgress();
   }
   window.cerrarCamara = cerrarCamara;
