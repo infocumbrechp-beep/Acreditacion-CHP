@@ -1500,17 +1500,13 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    try {
-      var ok   = document.getElementById('tracking-ok');
-      var area = document.getElementById('tracking-area');
-      if (ok)   ok.setAttribute('style','display:none !important');
-      if (area) area.setAttribute('style','display:block !important');
-      updateProgress();
-    } catch(e) {}
-    try {
-      if (html5QrCode) { var q=html5QrCode; html5QrCode=null; qrActivo=false; try{q.stop().catch(function(){});}catch(e2){} try{q.clear();}catch(e3){} }
-      else { qrActivo=false; }
-    } catch(e) { html5QrCode=null; qrActivo=false; }
+    html5QrCode = null;
+    qrActivo = false;
+    var ok   = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    if (ok)   ok.setAttribute('style','display:none');
+    if (area) area.setAttribute('style','display:block');
+    updateProgress();
   }
 
   function updateProgress() {
