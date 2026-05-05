@@ -327,17 +327,28 @@ function parsearQR(raw) {
 ════════════════════════════════════════════════ */
 function diasAuth(pase, esp) {
   var p = (pase||'').toUpperCase(), e = (esp||'').toLowerCase();
-  if (p==='ENFERMERÍA' || e.indexOf('enfermero')!==-1 || e.indexOf('enfermera')!==-1) return ['Día 1'];
+  var esEnfermero = p==='ENFERMERÍA' || p==='ENFERMERIA' ||
+    e.indexOf('enfermero')!==-1 || e.indexOf('enfermera')!==-1 ||
+    e.indexOf('enfermer')!==-1;
+  if (esEnfermero) return ['Día 1'];
   return ['Día 2','Día 3'];
 }
 function horaActual() {
   var n = new Date();
   return n.getHours() + ':' + (n.getMinutes()<10?'0':'') + n.getMinutes();
 }
+function claveAsistente(a) {
+  // Si UID es genérico CHP-NEW, usar nombre normalizado como clave única
+  if (!a.uid || a.uid === 'CHP-NEW' || a.uid === 'CHP-NEW') {
+    return 'NOMBRE_' + (a.nombre||'').toLowerCase().trim().replace(/\s+/g,'-');
+  }
+  return a.uid;
+}
 function validar(raw) {
   var a = parsearQR(raw), hora = horaActual();
   if (!a.uid || a.uid.length < 3) return {tipo:'i', a:a, hora:hora};
-  if (escaneados[a.uid])          return {tipo:'r', a:a, hora:hora, horaPrevia:escaneados[a.uid].hora};
+  var clave = claveAsistente(a);
+  if (escaneados[clave]) return {tipo:'r', a:a, hora:hora, horaPrevia:escaneados[clave].hora};
   var auth = diasAuth(a.pase, a.especialidad);
   if (auth.indexOf(diaNombre) === -1) return {tipo:'w', a:a, hora:hora, auth:auth};
   return {tipo:'v', a:a, hora:hora, auth:auth};
@@ -398,7 +409,7 @@ function registrarValido(res) {
     staffId:staffId, sincronizado:false
   };
   registros.unshift(reg);
-  escaneados[a.uid] = {hora:res.hora, nombre:a.nombre};
+  escaneados[claveAsistente(a)] = {hora:res.hora, nombre:a.nombre};
   guardarLocal();
   refrescarContadores();
   refrescarLista();
