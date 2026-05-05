@@ -1578,6 +1578,16 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       setTimeout(function(){ cerrarCamara(); alert('Error al cargar el escáner. Recarga la página.'); }, 1500);
       return;
     }
+    // Destruir y recrear el div del escáner para forzar liberación de cámara en iOS
+    try {
+      var oldReader = document.getElementById('qr-reader');
+      if (oldReader) {
+        var parent = oldReader.parentNode;
+        var newReader = document.createElement('div');
+        newReader.id = 'qr-reader';
+        parent.replaceChild(newReader, oldReader);
+      }
+    } catch(e) {}
     try { html5QrCode = new Html5Qrcode('qr-reader'); } catch(e) { setStatus('Error al iniciar'); return; }
 
     var config = {
@@ -1877,14 +1887,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     bindEv('btn-reset-valid', resetAcred);
     bindEv('btn-reset-wrong', resetAcred);
     bindEv('btn-reset-invalid', resetAcred);
-    bindEv('btn-scan-track', function(){
-      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      if (isIOS) {
-        abrirCamaraIOS('track');
-      } else {
-        abrirCamara('track');
-      }
-    });
+    bindEv('btn-scan-track', function(){ abrirCamara('track'); });
     // btn-reset-track manejado por ontouchstart inline
     bindEv('btn-reg-guardar', validarYGuardarRegistro);
     // Enter en campos del formulario
