@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Shields MS, C.A. — Tecnología Internacional en Cuidado de Heridas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #05192D;
+  --navy2:   #0A2540;
+  --blue:    #1A6EBD;
+  --blue-lt: #E8F2FC;
+  --cyan:    #00B4D8;
+  --gold:    #C9A84C;
+  --gold-lt: #FBF5E6;
+  --white:   #FFFFFF;
+  --off:     #F7F9FC;
+  --g50:     #E8EDF2;
+  --g300:    #8A97A6;
+  --g500:    #4A5568;
+  --sh:      0 4px 24px rgba(5,25,45,.08);
+  --sh2:     0 12px 48px rgba(5,25,45,.14);
+  --r:       10px;
+  --rlg:     16px;
+  --rxl:     24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;font-size:16px;color:var(--navy);background:var(--white);-webkit-font-smoothing:antialiased;}
+.container{width:100%;max-width:1100px;margin:0 auto;padding:0 28px;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;}
+h1,h2,h3{font-family:'Playfair Display',serif;line-height:1.15;}
+
+/* ── UTILITIES ── */
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;}
+.ey-gold{color:var(--gold);}
+.ey-blue{color:var(--blue);}
+.ey-white{color:rgba(255,255,255,.6);}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ── BUTTONS ── */
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--blue);color:#fff;font-size:15px;font-weight:600;
+  padding:15px 32px;border-radius:100px;border:none;cursor:pointer;
+  transition:background .2s,transform .15s;box-shadow:0 4px 20px rgba(26,110,189,.3);
+}
+.btn-primary:hover{background:#155ea0;transform:translateY(-1px);}
+.btn-gold{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--gold);color:var(--navy);font-size:15px;font-weight:700;
+  padding:15px 32px;border-radius:100px;border:none;cursor:pointer;
+  transition:background .2s,transform .15s;box-shadow:0 4px 20px rgba(201,168,76,.35);
+}
+.btn-gold:hover{background:#b8923e;transform:translateY(-1px);}
+.btn-outline{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:transparent;color:var(--navy);font-size:14px;font-weight:600;
+  padding:13px 28px;border-radius:100px;border:1.5px solid var(--navy);cursor:pointer;
+  transition:background .2s,color .2s;
+}
+.btn-outline:hover{background:var(--navy);color:#fff;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--g50);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;max-width:1100px;margin:0 auto;
+}
+.nav-logo img{height:40px;width:auto;object-fit:contain;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{font-size:13px;font-weight:500;color:var(--g500);transition:color .2s;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{
+  background:var(--blue);color:#fff !important;
+  padding:9px 22px;border-radius:100px;font-weight:600 !important;
+  transition:background .2s !important;
+}
+.nav-cta:hover{background:#155ea0 !important;}
+@media(max-width:768px){.nav-links{display:none;}}
+
+/* ── FAB ── */
+#fab-ms{
+  position:fixed;bottom:28px;right:24px;z-index:8888;
+  align-items:center;gap:8px;display:none;
+  background:var(--gold);color:var(--navy);
+  font-size:13px;font-weight:700;
+  padding:13px 22px;border-radius:50px;
+  box-shadow:0 6px 28px rgba(201,168,76,.4);
+  text-decoration:none;white-space:nowrap;
+  transition:transform .2s,background .2s;
+}
+#fab-ms:hover{background:#b8923e;transform:translateY(-2px);}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;background:var(--navy);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;padding-top:72px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(26,110,189,.2) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 80%, rgba(0,180,216,.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(201,168,76,.06) 0%, transparent 60%);
+}
+.hero-grid-bg{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+.hero-inner{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:58% 1fr;
+  gap:60px;align-items:center;
+  width:100%;max-width:1100px;margin:0 auto;
+  padding:90px 28px 80px;
+}
+.hero-logo{margin-bottom:32px;}
+.hero-logo img{
+  width:min(280px,80%);height:auto;
+  filter:brightness(0) invert(1) drop-shadow(0 4px 20px rgba(201,168,76,.3));
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+  border-radius:100px;padding:6px 16px;margin-bottom:24px;
+}
+.hero-badge span{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.hero-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,5vw,58px);color:#fff;
+  line-height:1.1;margin-bottom:22px;
+}
+.hero-h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{
+  font-size:17px;color:rgba(255,255,255,.8);
+  line-height:1.7;margin-bottom:32px;
+  border-left:3px solid var(--gold);padding-left:18px;
+}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px;}
+.hero-ref{
+  font-size:13px;color:rgba(255,255,255,.5);
+  font-style:italic;display:flex;align-items:center;gap:8px;
+}
+.hero-ref::before{content:'—';color:var(--gold);}
+/* Hero right card */
+.hero-card{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:24px;padding:32px;
+}
+.hero-card-title{
+  font-size:11px;font-weight:700;color:var(--gold);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;
+}
+.hstat{display:flex;flex-direction:column;gap:20px;}
+.hstat-item{border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:20px;}
+.hstat-item:last-child{border-bottom:none;padding-bottom:0;}
+.hstat-n{font-family:'Playfair Display',serif;font-size:40px;color:var(--gold);line-height:1;}
+.hstat-l{font-size:12px;color:rgba(255,255,255,.6);font-weight:500;margin-top:4px;letter-spacing:.5px;text-transform:uppercase;}
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-card{display:none;}
+}
+
+/* ── S2 SOBRE MS ── */
+#sobre{padding:100px 0;background:var(--off);}
+.sobre-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.sobre-visual{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);
+  border-radius:28px;padding:48px 40px;position:relative;overflow:hidden;
+}
+.sobre-visual::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.sobre-stat{position:relative;z-index:1;margin-bottom:28px;}
+.sobre-stat:last-child{margin-bottom:0;}
+.sobre-stat-n{font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);line-height:1;}
+.sobre-stat-l{font-size:13px;color:rgba(255,255,255,.65);font-weight:500;margin-top:6px;letter-spacing:.5px;}
+.sobre-copy h2{font-size:clamp(28px,3.5vw,40px);color:var(--navy);margin-bottom:16px;}
+.sobre-copy p{font-size:15px;color:var(--g500);line-height:1.8;margin-bottom:20px;}
+.sobre-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+.sobre-pill{
+  background:var(--blue-lt);color:var(--blue);
+  font-size:12px;font-weight:600;padding:7px 16px;
+  border-radius:100px;border:1px solid rgba(26,110,189,.15);
+}
+@media(max-width:768px){.sobre-inner{grid-template-columns:1fr;}}
+
+/* ── S3 MARCAS ── */
+#marcas{padding:100px 0;background:var(--white);}
+.marcas-intro{text-align:center;max-width:600px;margin:0 auto 56px;}
+.marcas-intro h2{font-size:clamp(28px,3.5vw,40px);color:var(--navy);margin-bottom:12px;}
+.marcas-intro p{font-size:15px;color:var(--g500);line-height:1.7;}
+.marcas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:600px){.marcas-grid{grid-template-columns:repeat(2,1fr);}}
+.marca-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 20px;background:var(--off);border-radius:16px;
+  border:1px solid var(--g50);cursor:pointer;
+  transition:box-shadow .2s,transform .2s,border-color .2s;min-height:100px;
+}
+.marca-card:hover{
+  box-shadow:0 8px 32px rgba(26,110,189,.15);
+  transform:translateY(-3px);border-color:var(--blue);
+}
+.marca-card img{width:100%;max-width:120px;height:48px;object-fit:contain;}
+
+/* ── S4 PROPUESTA ── */
+#propuesta{padding:100px 0;background:var(--navy);}
+.prop-title{text-align:center;max-width:600px;margin:0 auto 56px;}
+.prop-title h2{font-size:clamp(28px,3.5vw,40px);color:#fff;margin-bottom:12px;}
+.prop-title p{font-size:15px;color:rgba(255,255,255,.7);line-height:1.7;}
+.prop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+@media(min-width:900px){.prop-grid{grid-template-columns:repeat(4,1fr);}}
+.prop-card{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:32px 24px;
+  transition:background .2s,border-color .2s;
+}
+.prop-card:hover{background:rgba(255,255,255,.08);border-color:rgba(201,168,76,.3);}
+.prop-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+}
+.prop-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:18px;color:#fff;margin-bottom:8px;
+}
+.prop-card p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;}
+
+/* ── S5 PARA QUIÉN ── */
+#audiencia{padding:100px 0;background:var(--off);}
+.aud-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:56px;}
+.aud-card{border-radius:24px;padding:40px 36px;position:relative;overflow:hidden;}
+.aud-card-med{background:var(--navy);}
+.aud-card-dist{background:var(--gold-lt);border:1px solid rgba(201,168,76,.2);}
+.aud-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:6px 14px;border-radius:100px;margin-bottom:20px;
+}
+.aud-tag-med{background:rgba(201,168,76,.15);color:var(--gold);}
+.aud-tag-dist{background:rgba(26,110,189,.12);color:var(--blue);}
+.aud-card h3{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:14px;}
+.aud-card-med h3{color:#fff;}
+.aud-card-dist h3{color:var(--navy);}
+.aud-card p{font-size:14px;line-height:1.75;margin-bottom:20px;}
+.aud-card-med p{color:rgba(255,255,255,.75);}
+.aud-card-dist p{color:var(--g500);}
+.aud-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.aud-list li{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:500;}
+.aud-card-med .aud-list li{color:rgba(255,255,255,.85);}
+.aud-card-dist .aud-list li{color:var(--navy);}
+.aud-check{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+}
+.aud-card-med .aud-check{background:rgba(201,168,76,.2);color:var(--gold);}
+.aud-card-dist .aud-check{background:rgba(26,110,189,.12);color:var(--blue);}
+@media(max-width:768px){.aud-grid{grid-template-columns:1fr;}}
+
+/* ── S6 FORMULARIO ── */
+#formulario{padding:100px 0;background:var(--navy);}
+.form-inner{display:grid;grid-template-columns:1fr 1.2fr;gap:64px;align-items:start;}
+.form-left h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);color:#fff;margin-bottom:16px;}
+.form-left p{font-size:15px;color:rgba(255,255,255,.75);line-height:1.75;margin-bottom:28px;}
+.form-highlight{
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);
+  border-radius:16px;padding:20px 24px;
+  font-size:14px;color:rgba(255,255,255,.85);line-height:1.6;
+  font-style:italic;
+}
+.form-card{
+  background:#fff;border-radius:24px;padding:40px 36px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.form-card h3{
+  font-family:'Playfair Display',serif;font-size:22px;
+  color:var(--navy);margin-bottom:24px;
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;}
+.form-group input,.form-group select{
+  padding:12px 16px;border:1.5px solid var(--g50);border-radius:10px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--navy);
+  background:var(--off);transition:border-color .2s;outline:none;
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue);}
+.form-tipo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+.tipo-opt{
+  border:2px solid var(--g50);border-radius:12px;padding:14px 16px;
+  cursor:pointer;transition:border-color .2s,background .2s;text-align:center;
+}
+.tipo-opt.selected{border-color:var(--blue);background:var(--blue-lt);}
+.tipo-opt-icon{font-size:24px;margin-bottom:6px;}
+.tipo-opt-label{font-size:12px;font-weight:700;color:var(--navy);}
+.tipo-opt-sub{font-size:11px;color:var(--g300);margin-top:2px;}
+.form-submit{
+  width:100%;padding:16px;background:var(--blue);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;
+  border:none;border-radius:100px;cursor:pointer;margin-top:8px;
+  transition:background .2s,transform .15s;
+  box-shadow:0 4px 20px rgba(26,110,189,.3);
+}
+.form-submit:hover{background:#155ea0;transform:translateY(-1px);}
+.form-success{display:none;text-align:center;padding:40px 20px;}
+.form-success-icon{font-size:52px;margin-bottom:16px;}
+.form-success h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:12px;}
+.form-success p{font-size:14px;color:var(--g500);line-height:1.7;}
+@media(max-width:768px){
+  .form-inner{grid-template-columns:1fr;}
+  .form-card{padding:28px 20px;}
+  .form-grid{grid-template-columns:1fr;}
+}
+
+/* ── FOOTER ── */
+footer{background:var(--navy2);border-top:1px solid rgba(255,255,255,.06);padding:56px 0 28px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:48px;margin-bottom:40px;}
+.footer-brand img{height:40px;width:auto;margin-bottom:16px;filter:brightness(0) invert(1);}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7;}
+.footer-col h4{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.55);margin-bottom:10px;transition:color .2s;}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr;}}
+
+/* ── MODALES PRODUCTOS ── */
+.prod-modal-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
+.prod-modal-overlay.active{display:flex;}
+.prod-modal{background:#fff;border-radius:20px;width:100%;max-width:560px;max-height:82vh;overflow-y:auto;padding:32px 28px 28px;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.prod-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--g50);}
+.prod-modal-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);}
+.prod-modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--g300);padding:4px 8px;border-radius:6px;}
+.prod-modal-close:hover{background:var(--off);}
+.prod-nota{font-size:12px;color:#888;font-style:italic;border-left:3px solid var(--gold);padding:8px 12px;margin-bottom:16px;background:#fffdf5;border-radius:0 8px 8px 0;}
+.prod-card{border:1px solid var(--g50);border-radius:14px;padding:18px;margin-bottom:12px;}
+.prod-card:last-child{margin-bottom:0;}
+.prod-card-name{font-size:15px;font-weight:700;color:var(--navy);margin:0 0 8px;}
+.prod-card-desc{font-size:13px;color:var(--g500);line-height:1.6;margin:0 0 10px;}
+.prod-card-desc p{margin:0 0 6px;}
+.prod-pdfs{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.prod-pdf-btn{display:flex;align-items:center;gap:8px;background:var(--off);color:var(--navy);font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;text-decoration:none;border:1.5px solid var(--g50);width:100%;transition:background .2s,color .2s;}
+.prod-pdf-btn:hover{background:var(--navy);color:#fff;}
+.prod-pdf-btn::before{content:"📄";font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- FAB -->
+<a id="fab-ms" href="#formulario">Contactar ahora →</a>
+<script>
+(function(){
+  function init(){
+    var fab=document.getElementById('fab-ms');
+    var hero=document.getElementById('hero');
+    if(!fab||!hero)return;
+    fab.style.display='none';
+    function check(){fab.style.display=(hero.getBoundingClientRect().bottom<0)?'flex':'none';}
+    window.addEventListener('scroll',check,{passive:true});
+    check();
+  }
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+})();
+</script>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <img src="Medical Shields.png" alt="Medical Shields MS, C.A."
+           onerror="this.style.display='none'">
+    </div>
+    <ul class="nav-links">
+      <li><a href="#sobre">Nosotros</a></li>
+      <li><a href="#marcas">Marcas</a></li>
+      <li><a href="#audiencia">Para quién</a></li>
+      <li><a href="#formulario" class="nav-cta">Contactar →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-logo">
+        <img src="Medical Shields.png" alt="Medical Shields MS, C.A."
+             onerror="this.style.display='none'">
+      </div>
+      <div class="hero-badge"><span>Distribuidor exclusivo · Venezuela · +20 años</span></div>
+      <h1 class="hero-h1">Tecnología internacional<br>en el cuidado<br><em>avanzado de heridas</em></h1>
+      <p class="hero-sub">Distribuimos las marcas más avanzadas del mundo en wound care y productos médicos especializados para Venezuela y la región.</p>
+      <div class="hero-btns">
+        <a href="#formulario" class="btn-gold">Quiero ser distribuidor</a>
+        <a href="#marcas" class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);">Ver nuestras marcas</a>
+      </div>
+      <p class="hero-ref">Socios estratégicos de Covalon, Synkotech, Soubeiran Chobet, Baihe y Conkote.</p>
+    </div>
+    <div class="hero-card reveal">
+      <div class="hero-card-title">Nuestra trayectoria</div>
+      <div class="hstat">
+        <div class="hstat-item">
+          <div class="hstat-n">+20</div>
+          <div class="hstat-l">Años en Venezuela</div>
+        </div>
+        <div class="hstat-item">
+          <div class="hstat-n">5</div>
+          <div class="hstat-l">Marcas internacionales exclusivas</div>
+        </div>
+        <div class="hstat-item">
+          <div class="hstat-n">50+</div>
+          <div class="hstat-l">Instituciones nacionales aliadas</div>
+        </div>
+        <div class="hstat-item">
+          <div class="hstat-n">1,000+</div>
+          <div class="hstat-l">Médicos en el ecosistema</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S2 SOBRE MS -->
+<section id="sobre">
+  <div class="container">
+    <div class="sobre-inner">
+      <div class="sobre-visual reveal">
+        <div class="sobre-stat"><div class="sobre-stat-n">+20</div><div class="sobre-stat-l">Años de trayectoria en Venezuela</div></div>
+        <div class="sobre-stat"><div class="sobre-stat-n">5</div><div class="sobre-stat-l">Marcas internacionales exclusivas</div></div>
+        <div class="sobre-stat"><div class="sobre-stat-n">50+</div><div class="sobre-stat-l">Instituciones nacionales aliadas</div></div>
+      </div>
+      <div class="sobre-copy reveal">
+        <span class="eyebrow ey-blue">Quiénes somos</span>
+        <h2 style="margin-top:12px;">El puente entre la tecnología global y la práctica médica venezolana</h2>
+        <p>Medical Shields MS, C.A. es el distribuidor exclusivo para Venezuela de las principales marcas internacionales en wound care, materiales médicos avanzados y soluciones para el cuidado de heridas.</p>
+        <p>Más de dos décadas conectando hospitales, clínicas y profesionales de la salud con tecnología de vanguardia, respaldada por protocolos clínicos y formación continua.</p>
+        <div class="sobre-pills">
+          <span class="sobre-pill">Distribución exclusiva</span>
+          <span class="sobre-pill">Soporte clínico</span>
+          <span class="sobre-pill">Formación continua</span>
+          <span class="sobre-pill">+20 años de experiencia</span>
+          <span class="sobre-pill">Cobertura nacional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3 MARCAS -->
+<section id="marcas">
+  <div class="container">
+    <div class="marcas-intro reveal">
+      <span class="eyebrow ey-blue">Portafolio</span>
+      <h2 style="margin-top:12px;">Marcas internacionales exclusivas</h2>
+      <p>Distribuidor exclusivo para Venezuela de 5 marcas líderes en wound care y materiales médicos avanzados.</p>
+    </div>
+    <div class="marcas-grid reveal">
+      <div class="marca-card" onclick="openModal('covalon')" title="Ver productos Covalon">
+        <img src="logo-covalon.png" alt="Covalon" onerror="this.style.display='none'">
+      </div>
+      <div class="marca-card" onclick="openModal('synkotech')" title="Ver productos Synkotech">
+        <img src="synkotech.jpg" alt="Synkotech" onerror="this.style.display='none'">
+      </div>
+      <div class="marca-card" onclick="openModal('soubeiran')" title="Ver productos Soubeiran">
+        <img src="logo-soubeiran.png" alt="Soubeiran Chobet" onerror="this.style.display='none'">
+      </div>
+      <div class="marca-card" onclick="openModal('baihe')" title="Ver productos Baihe">
+        <img src="Logo-baihe.png" alt="Baihe ABLE" onerror="this.style.display='none'">
+      </div>
+      <div class="marca-card" onclick="openModal('conkote')" title="Ver productos Conkote">
+        <img src="conkote (1).png" alt="Conkote" onerror="this.style.display='none'">
+      </div>
+      <div class="marca-card" style="background:var(--navy);cursor:default;">
+        <img src="Medical Shields.png" alt="Medical Shields" style="height:44px;width:auto;" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S4 PROPUESTA -->
+<section id="propuesta">
+  <div class="container">
+    <div class="prop-title reveal">
+      <span class="eyebrow ey-white">Por qué Medical Shields</span>
+      <h2 style="margin-top:12px;">Lo que nos diferencia</h2>
+      <p style="color:rgba(255,255,255,.65);">Más que distribución — un ecosistema completo de soporte clínico, formación y tecnología.</p>
+    </div>
+    <div class="prop-grid reveal">
+      <div class="prop-card">
+        <div class="prop-icon">🏆</div>
+        <h3>Exclusividad</h3>
+        <p>Representante exclusivo en Venezuela de 5 marcas líderes internacionales en wound care.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🎓</div>
+        <h3>Formación</h3>
+        <p>Cumbre CHP, talleres y actualización clínica continua para el ecosistema médico.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🩺</div>
+        <h3>Soporte clínico</h3>
+        <p>Protocolos de uso, acompañamiento técnico y respaldo para cada producto.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🚚</div>
+        <h3>Logística nacional</h3>
+        <p>Cobertura en todo el territorio venezolano con distribución directa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 PARA QUIÉN -->
+<section id="audiencia">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:560px;margin:0 auto;">
+      <span class="eyebrow ey-blue">¿Para quién?</span>
+      <h2 style="margin-top:12px;font-size:clamp(28px,3.5vw,40px);">Dos formas de trabajar con nosotros</h2>
+    </div>
+    <div class="aud-grid reveal">
+      <div class="aud-card aud-card-med">
+        <div class="aud-tag aud-tag-med">Para médicos</div>
+        <h3>Accede a tecnología avanzada para tu práctica</h3>
+        <p>Incorpora los productos más avanzados en wound care a tus protocolos clínicos con el respaldo técnico de Medical Shields.</p>
+        <ul class="aud-list">
+          <li><div class="aud-check">✓</div>Acceso directo a productos internacionales</li>
+          <li><div class="aud-check">✓</div>Protocolos clínicos y soporte técnico</li>
+          <li><div class="aud-check">✓</div>Formación continua y Cumbre CHP</li>
+          <li><div class="aud-check">✓</div>Red de +1,000 médicos especialistas</li>
+        </ul>
+        <a href="#formulario" class="btn-gold" style="width:100%;justify-content:center;">Solicitar información →</a>
+      </div>
+      <div class="aud-card aud-card-dist">
+        <div class="aud-tag aud-tag-dist">Para distribuidores y farmacias</div>
+        <h3>Distribuye las marcas líderes en tu región</h3>
+        <p>Conviértete en distribuidor autorizado de Medical Shields y lleva tecnología de vanguardia en wound care a tu mercado.</p>
+        <ul class="aud-list">
+          <li><div class="aud-check">✓</div>Catálogo completo de 5 marcas exclusivas</li>
+          <li><div class="aud-check">✓</div>Precios y condiciones preferenciales</li>
+          <li><div class="aud-check">✓</div>Soporte comercial y material de ventas</li>
+          <li><div class="aud-check">✓</div>Capacitación para tu equipo de ventas</li>
+        </ul>
+        <a href="#formulario" class="btn-primary" style="width:100%;justify-content:center;">Quiero ser distribuidor →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S6 FORMULARIO -->
+<section id="formulario">
+  <div class="container">
+    <div class="form-inner">
+      <div class="form-left reveal">
+        <span class="eyebrow ey-white">Contacto</span>
+        <h2 style="margin-top:12px;">Hablemos de cómo podemos trabajar juntos</h2>
+        <p>Completa el formulario y un especialista de Medical Shields se pondrá en contacto contigo para presentarte nuestro portafolio y condiciones.</p>
+        <div class="form-highlight">"La tecnología correcta, aplicada con el protocolo adecuado, marca la diferencia en cada paciente."</div>
+      </div>
+      <div class="reveal">
+        <div class="form-card">
+          <div id="form-body">
+            <h3>Solicitud de contacto</h3>
+            <form id="ms-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Nombre *</label>
+                  <input type="text" id="f-nombre" placeholder="Tu nombre" required>
+                </div>
+                <div class="form-group">
+                  <label>Apellido *</label>
+                  <input type="text" id="f-apellido" placeholder="Tu apellido" required>
+                </div>
+                <div class="form-group">
+                  <label>Email *</label>
+                  <input type="email" id="f-email" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Teléfono *</label>
+                  <input type="tel" id="f-telefono" placeholder="+58 4XX XXX XXXX" required>
+                </div>
+                <div class="form-group full">
+                  <label>Especialidad / Cargo</label>
+                  <input type="text" id="f-especialidad" placeholder="Ej: Médico Cirujano, Gerente de Farmacia...">
+                </div>
+                <div class="form-group full">
+                  <label>Me interesa *</label>
+                  <div class="form-tipo" id="tipo-selector">
+                    <div class="tipo-opt selected" data-value="productos" onclick="selectTipo(this)">
+                      <div class="tipo-opt-icon">📋</div>
+                      <div class="tipo-opt-label">Más información de productos</div>
+                      <div class="tipo-opt-sub">Catálogo y protocolos</div>
+                    </div>
+                    <div class="tipo-opt" data-value="distribuidor" onclick="selectTipo(this)">
+                      <div class="tipo-opt-icon">🤝</div>
+                      <div class="tipo-opt-label">Ser distribuidor</div>
+                      <div class="tipo-opt-sub">Condiciones comerciales</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="form-submit" id="form-btn">Enviar solicitud →</button>
+            </form>
+          </div>
+          <div class="form-success" id="form-success">
+            <div class="form-success-icon">✅</div>
+            <h3>¡Solicitud recibida!</h3>
+            <p>Gracias por tu interés en Medical Shields MS, C.A.<br><br>Un especialista se pondrá en contacto contigo en las próximas 24-48 horas para presentarte nuestro portafolio y condiciones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="Medical Shields.png" alt="Medical Shields" onerror="this.style.display='none'">
+        <p>Distribuidor exclusivo de marcas internacionales en wound care y materiales médicos avanzados para Venezuela.</p>
+        <p style="margin-top:12px;color:rgba(255,255,255,.35);font-size:12px;">Centro Clínico Profesional Caracas<br>Piso 13, Consultorio 1308<br>San Bernardino, Caracas, Venezuela</p>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="https://wa.me/584166181760" target="_blank">💬 +58 416-618-1760</a>
+        <a href="mailto:informacion@medicalshields.com">✉️ informacion@medicalshields.com</a>
+        <a href="https://medicalshields.com" target="_blank">🌐 medicalshields.com</a>
+      </div>
+      <div class="footer-col">
+        <h4>Ecosistema</h4>
+        <a href="https://cuidamostuherida.com" target="_blank">🏥 Cuidamos Tu Herida</a>
+        <a href="https://cumbrechp.org" target="_blank">🏆 Cumbre CHP 2026</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Medical Shields MS, C.A. · Todos los derechos reservados</div>
+  </div>
+</footer>
+
+<!-- MODALES PRODUCTOS -->
+<div class="prod-modal-overlay" id="modal-baihe" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="prod-modal">
+    <div class="prod-modal-header"><h3 class="prod-modal-title">Baihe · ABLE®</h3><button class="prod-modal-close" onclick="document.getElementById('modal-baihe').classList.remove('active')">✕</button></div>
+    <div class="prod-card"><p class="prod-card-name">Catéter de Hemodiálisis (HC)</p><div class="prod-card-desc"><p>Acceso vascular para hemodiálisis. Kit incluye catéter, dilatador, aguja introductora y alambre guía.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1cvo1cIV145JaUckWje0TsIzeE7bfDeNZ/view?usp=sharing" target="_blank">HC</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/13w6ddWl3NOrFNvRgA0kL_UeYajVnP5Gi/view?usp=sharing" target="_blank">IFU HC</a></div></div><div class="prod-card"><p class="prod-card-name">Catéter Venoso Central (CVC)</p><div class="prod-card-desc"><p>Acceso venoso a largo plazo. Técnica Seldinger para venas yugular o subclavia.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1OJUZBAp9EqbOD4A7r0Ldqb5anD3IydWP/view?usp=sharing" target="_blank">CVC</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/11bM33mSJ49cn5AH_oqQtQku7OKmHD-pU/view?usp=sharing" target="_blank">IFU CVC</a></div></div>
+  </div>
+</div>
+<div class="prod-modal-overlay" id="modal-synkotech" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="prod-modal">
+    <div class="prod-modal-header"><h3 class="prod-modal-title">Synkotech</h3><button class="prod-modal-close" onclick="document.getElementById('modal-synkotech').classList.remove('active')">✕</button></div>
+    <p class="prod-nota">⚠️ Uso externo exclusivamente.</p><div class="prod-card"><p class="prod-card-name">SilkyBarrier — Spray y Toallitas</p><div class="prod-card-desc"><p>Barrera protectora de larga duración contra irritantes. Ideal para piel perilesional.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1HZ6v7P-wghQr1mRRFTlemgha-c-7Lt5q/view?usp=sharing" target="_blank">IFU Silky Barrier</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/183Z4_6OewKgjwp2A3OLvZdkbQ1gNu6JP/view?usp=sharing" target="_blank">Catálogo ES</a></div></div><div class="prod-card"><p class="prod-card-name">LilaProtect — Spray y Stick</p><div class="prod-card-desc"><p>Barrera cutánea especializada. Evita maceración permitiendo que la piel respire.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1cLgh6Uv4fQexJDYpxA-5UZIMaORNcB_n/view?usp=sharing" target="_blank">LilaProtect Stick</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/19zU5JLEBA3-oLcsa1DFQ4Q9m5rCfxXPZ/view?usp=sharing" target="_blank">LilaProtect Spray</a></div></div>
+  </div>
+</div>
+<div class="prod-modal-overlay" id="modal-soubeiran" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="prod-modal">
+    <div class="prod-modal-header"><h3 class="prod-modal-title">Soubeiran Chobet</h3><button class="prod-modal-close" onclick="document.getElementById('modal-soubeiran').classList.remove('active')">✕</button></div>
+    <p class="prod-nota">⚠️ Supervisión profesional requerida.</p><div class="prod-card"><p class="prod-card-name">Platsul A® — Crema</p><div class="prod-card-desc"><p>Sulfadiazina de Plata + Vitamina A + Lidocaína. Tratamiento de quemaduras con acción antibacteriana y cicatrizante.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1QXzsDK4r1tzuu5nAbuM4On0vo5KNOsSc/view?usp=sharing" target="_blank">PLATSUL-A Crema</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1RaensPDgMPnR6QcCzncAwDyyz7IiQ4kE/view?usp=sharing" target="_blank">Tríptico</a></div></div><div class="prod-card"><p class="prod-card-name">Platsul® Apósitos</p><div class="prod-card-desc"><p>Gasas no tejidas impregnadas. No se adhieren al lecho de la herida.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1N7ljKPt1yftbR-fZfbNLU6carATont2K/view?usp=sharing" target="_blank">Ficha Técnica</a></div></div>
+  </div>
+</div>
+<div class="prod-modal-overlay" id="modal-covalon" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="prod-modal">
+    <div class="prod-modal-header"><h3 class="prod-modal-title">Covalon</h3><button class="prod-modal-close" onclick="document.getElementById('modal-covalon').classList.remove('active')">✕</button></div>
+    <div class="prod-card"><p class="prod-card-name">ColActive® PLUS y PLUS Ag</p><div class="prod-card-desc"><p>Colágeno + CMC + Alginato. Reactiva cicatrización en heridas estancadas. Versión Ag con barrera antimicrobiana.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1ZY2_REHPbo0QlvYpabJS3ut5aWSKeaPh/view?usp=sharing" target="_blank">ColActive Plus PI ES</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1jNx0Bp22Ac0u1JZxVsXCZ24cbpVojYI4/view?usp=sharing" target="_blank">ColActive Plus Ag PI ES</a></div></div><div class="prod-card"><p class="prod-card-name">IV Clear®</p><div class="prod-card-desc"><p>Apósito transparente de silicona con Clorhexidina + Plata. Protege accesos vasculares hasta 7 días.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1eX3dAWyA7XrobvB_hHQIChMoH009zJCV/view?usp=sharing" target="_blank">Product Info ES</a></div></div><div class="prod-card"><p class="prod-card-name">CovaWound™ — Espuma</p><div class="prod-card-desc"><p>Gestión óptima de fluidos. Protección contra presión y fricción.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1dmtOQX8cLKzlV2xYGP6kqjIyel-fdQsN/view?usp=sharing" target="_blank">Foam PI ES</a><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1R1LDvvSqz-o0XYuoP-iTcZMeCkCiB6FS/view?usp=sharing" target="_blank">Díptico CovaWound</a></div></div><div class="prod-card"><p class="prod-card-name">SurgiClear®</p><div class="prod-card-desc"><p>Barrera antimicrobiana para incisiones quirúrgicas. Previene ISQ.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1hktEu2yoDxnsf4FLg4O6_zTVXuYrxQ8d/view?usp=sharing" target="_blank">Product Info ES</a></div></div>
+  </div>
+</div>
+<div class="prod-modal-overlay" id="modal-conkote" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="prod-modal">
+    <div class="prod-modal-header"><h3 class="prod-modal-title">Conkote</h3><button class="prod-modal-close" onclick="document.getElementById('modal-conkote').classList.remove('active')">✕</button></div>
+    <p class="prod-nota">⚠️ Limpiar con solución salina antes de aplicar.</p><div class="prod-card"><p class="prod-card-name">Apósitos de Hidrocoloide</p><div class="prod-card-desc"><p>Para heridas con exudado ligero a moderado.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1jOsXFZdDvvXBQDOGEuxxKT15heRbaY-U/view?usp=sharing" target="_blank">IFU Hydrocolloid</a></div></div><div class="prod-card"><p class="prod-card-name">Alginato de Plata</p><div class="prod-card-desc"><p>Altamente absorbente con acción antimicrobiana por plata iónica.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/17sWwT2npavAOcby4zbFfyslBDyl2aa9t/view?usp=sharing" target="_blank">IFU Silver Alginate</a></div></div><div class="prod-card"><p class="prod-card-name">Catálogo Completo</p><div class="prod-card-desc"><p>Línea completa de apósitos para manejo avanzado de heridas.</p></div><div class="prod-pdfs"><a class="prod-pdf-btn" href="https://drive.google.com/file/d/1050KHRQDssbVrcjHGZYWn-iaGqid7F-G/view?usp=sharing" target="_blank">Catálogo Español</a></div></div>
+  </div>
+</div>
+
+<script>
+// ── Scroll reveal
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ── Nav scroll
+window.addEventListener('scroll',()=>{
+  document.querySelector('nav').style.boxShadow = window.scrollY>40 ? '0 4px 24px rgba(0,0,0,.1)' : 'none';
+},{passive:true});
+
+// ── Tipo selector
+var tipoSeleccionado = 'productos';
+function selectTipo(el) {
+  document.querySelectorAll('.tipo-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  tipoSeleccionado = el.dataset.value;
+}
+
+// ── Formulario → Google Sheets
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzAVoeDUqDkMeWVpeqQ5VTAHJES_tzzBfJ37sTaLPQpRBVk1FHeeauCMEfrvQY8xLqe/exec';
+
+document.getElementById('ms-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var btn = document.getElementById('form-btn');
+  btn.textContent = 'Enviando...'; btn.disabled = true;
+
+  var params = new URLSearchParams({
+    accion:       'contactoMedicalShields',
+    nombre:       document.getElementById('f-nombre').value.trim() + ' ' + document.getElementById('f-apellido').value.trim(),
+    email:        document.getElementById('f-email').value.trim(),
+    telefono:     document.getElementById('f-telefono').value.trim(),
+    especialidad: document.getElementById('f-especialidad').value.trim(),
+    interes:      tipoSeleccionado,
+    timestamp:    new Date().toLocaleString('es-VE'),
+    fuente:       'Landing Medical Shields'
+  });
+
+  var img = new Image();
+  img.onload = img.onerror = function(){
+    document.getElementById('form-body').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  };
+  img.src = SHEET_URL + '?' + params.toString();
+});
+
+// ── Modal productos
+function openModal(id){ document.getElementById('modal-'+id).classList.add('active'); }
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') document.querySelectorAll('.prod-modal-overlay.active').forEach(function(m){m.classList.remove('active');});
+});
+</script>
+</body>
+</html>
