@@ -1573,51 +1573,60 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function iniciarEscaner() {
-    if (typeof Html5Qrcode === 'undefined') {
-      setStatus('Error: librería no cargada');
-      setTimeout(function(){ cerrarCamara(); alert('Error al cargar el escáner. Recarga la página.'); }, 1500);
-      return;
-    }
-    // Destruir y recrear el div del escáner para forzar liberación de cámara en iOS
-    try {
-      var oldReader = document.getElementById('qr-reader');
-      if (oldReader) {
-        var parent = oldReader.parentNode;
-        var newReader = document.createElement('div');
-        newReader.id = 'qr-reader';
-        parent.replaceChild(newReader, oldReader);
+    var reader = document.getElementById('qr-reader');
+    if (!reader) return;
+
+    // Crear video element
+    reader.innerHTML = '';
+    var video = document.createElement('video');
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('muted', 'true');
+    video.style.cssText = 'width:100%;border-radius:12px;';
+    reader.appendChild(video);
+
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var scanning = true;
+
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: {ideal:1280}, height: {ideal:720} }
+    }).then(function(stream) {
+      video.srcObject = stream;
+      video.play();
+      qrActivo = true;
+      setStatus('Cámara activa — apunta al QR');
+
+      function tick() {
+        if (!scanning) return;
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width  = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          var code;
+          try { code = jsQR(imageData.data, imageData.width, imageData.height, {inversionAttempts:'dontInvert'}); } catch(e){}
+          if (code && code.data) {
+            scanning = false;
+            // Detener stream
+            stream.getTracks().forEach(function(t){ t.stop(); });
+            video.srcObject = null;
+            qrActivo = false;
+            html5QrCode = null;
+            procesarCodigoQR(code.data);
+            return;
+          }
+        }
+        requestAnimationFrame(tick);
       }
-    } catch(e) {}
-    try { html5QrCode = new Html5Qrcode('qr-reader'); } catch(e) { setStatus('Error al iniciar'); return; }
+      requestAnimationFrame(tick);
 
-    var config = {
-      fps: 10,
-      qrbox: function(w, h) { var s = Math.min(w, h) * 0.72; return { width: s, height: s }; },
-      aspectRatio: 1.0,
-      rememberLastUsedCamera: true,
-      showTorchButtonIfSupported: true
-    };
+      // Guardar stream para poder cerrarlo
+      html5QrCode = { _stream: stream, _scanning: function(){ return scanning; } };
 
-    function onSuccess(decodedText) {
-      qrActivo = false;
-      cerrarCamara();
-      procesarCodigoQR(decodedText);
-    }
-    function onError() { /* frame sin QR — normal */ }
-
-    // Intentar cámara trasera primero
-    html5QrCode.start({ facingMode: 'environment' }, config, onSuccess, onError)
-      .then(function(){ qrActivo=true; setStatus('Cámara activa — apunta al QR'); })
-      .catch(function() {
-        // Fallback: cualquier cámara disponible
-        Html5Qrcode.getCameras().then(function(cameras) {
-          if (!cameras || cameras.length === 0) { fallbackManual(); return; }
-          var camId = cameras[cameras.length-1].id;
-          html5QrCode.start(camId, config, onSuccess, onError)
-            .then(function(){ qrActivo=true; setStatus('Cámara activa — apunta al QR'); })
-            .catch(function(){ fallbackManual(); });
-        }).catch(function(){ fallbackManual(); });
-      });
+    }).catch(function(err) {
+      setStatus('Error: ' + err.message);
+      setTimeout(cerrarCamara, 2000);
+    });
   }
 
   function fallbackManual() {
@@ -1629,70 +1638,16 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function cerrarCamara() {
     var modal = document.getElementById('qr-modal');
     if (modal) modal.style.display = 'none';
-    if (html5QrCode) {
-      if (qrActivo) {
-        qrActivo = false;
-        html5QrCode.stop().then(function(){
-          try { html5QrCode.clear(); } catch(e) {}
-          html5QrCode = null;
-        }).catch(function(){
-          try { html5QrCode.clear(); } catch(e) {}
-          html5QrCode = null;
-        });
-      } else {
-        try { html5QrCode.clear(); } catch(e) {}
-        html5QrCode = null;
-      }
-    }
+    try {
+      document.querySelectorAll('video').forEach(function(v){
+        if(v.srcObject){ v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject=null; }
+      });
+    } catch(e){}
+    try { if(html5QrCode && html5QrCode._stream) { html5QrCode._stream.getTracks().forEach(function(t){t.stop()}); } } catch(e){}
+    html5QrCode = null;
+    qrActivo = false;
   }
-
-  function abrirCamaraIOS(modo) {
-    var input = document.getElementById('ios-track-input');
-    if (!input) return;
-    input.onchange = function(e) {
-      var file = e.target.files[0];
-      if (!file) { input.value=''; return; }
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        var img = new Image();
-        img.onload = function() {
-          // Intentar múltiples tamaños para mejor detección
-          var sizes = [
-            {w: img.width, h: img.height},
-            {w: 1024, h: Math.round(1024 * img.height / img.width)},
-            {w: 512,  h: Math.round(512  * img.height / img.width)},
-          ];
-          var code = null;
-          for (var s = 0; s < sizes.length; s++) {
-            var canvas = document.createElement('canvas');
-            canvas.width  = sizes[s].w;
-            canvas.height = sizes[s].h;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, sizes[s].w, sizes[s].h);
-            var imageData = ctx.getImageData(0, 0, sizes[s].w, sizes[s].h);
-            try { code = jsQR(imageData.data, imageData.width, imageData.height, {inversionAttempts:'dontInvert'}); } catch(e2) {}
-            if (code && code.data) break;
-            // Intentar invertido
-            try { code = jsQR(imageData.data, imageData.width, imageData.height, {inversionAttempts:'onlyInvert'}); } catch(e3) {}
-            if (code && code.data) break;
-          }
-          if (code && code.data) {
-            procesarCodigoQR(code.data);
-          } else {
-            if (confirm('No se pudo leer el QR automáticamente.\n\n¿Ingresar el código manualmente?')) {
-              var manual = prompt('Ingresa el ID de la conferencia (ej: CONF-D1-02):');
-              if (manual) procesarCodigoQR(manual.trim().toUpperCase());
-            }
-          }
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
-      input.value = '';
-    };
-    input.click();
-  }
-
+  
   function cerrarCamaraYReset() {
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
