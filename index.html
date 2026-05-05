@@ -883,14 +883,6 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   <div class="nav-btn" data-page="info"><div class="nav-icon">📢</div><div class="nav-label">Info</div></div>
 </nav>
 
-<!-- BOTÓN FLOTANTE REGISTRAR OTRA -->
-<div id="fab-registrar" style="display:none;position:fixed;bottom:80px;left:0;right:0;z-index:99999;text-align:center;pointer-events:none;">
-  <button 
-    style="background:#00897B;color:#fff;border:none;border-radius:100px;padding:14px 32px;font-size:16px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:all;cursor:pointer;"
-    onclick="document.getElementById('fab-registrar').style.display='none'; document.getElementById('tracking-ok').style.display='none'; document.getElementById('tracking-area').style.display='block';">
-    ← Registrar otra conferencia
-  </button>
-</div>
 
 
 <!-- MODAL QR — Html5-QrCode -->
@@ -1476,7 +1468,6 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       // Mostrar resultado y ocultar área
       trackOk.style.display = 'block';
       trackArea.style.display = 'none';
-      var fab = document.getElementById('fab-registrar'); if(fab) fab.style.display='block';
     }
 
     if (!conf) { mostrar('QR inválido','Esta conferencia no existe en el sistema.','error'); updateProgress(); return; }
@@ -1642,8 +1633,6 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function cerrarCamaraYReset() {
     document.getElementById('tracking-ok').style.display   = 'none';
     document.getElementById('tracking-area').style.display = 'block';
-    var fab = document.getElementById('fab-registrar');
-    if (fab) fab.style.display = 'none';
     try { document.querySelectorAll('video').forEach(function(v){ if(v.srcObject){v.srcObject.getTracks().forEach(function(t){t.stop();});v.srcObject=null;} }); } catch(e) {}
     try { if(html5QrCode){html5QrCode=null;} qrActivo=false; } catch(e) {}
   }
@@ -1833,7 +1822,18 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     bindEv('btn-reset-wrong', resetAcred);
     bindEv('btn-reset-invalid', resetAcred);
     bindEv('btn-scan-track', function(){ abrirCamara('track'); });
-    bindEv('btn-reset-track', cerrarCamaraYReset);
+    var btnReset = document.getElementById('btn-reset-track');
+    if (btnReset) {
+      btnReset.addEventListener('touchstart', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        cerrarCamaraYReset();
+      }, {passive:false});
+      btnReset.addEventListener('click', function(e){
+        e.preventDefault();
+        cerrarCamaraYReset();
+      });
+    }
     bindEv('btn-reg-guardar', validarYGuardarRegistro);
     // Enter en campos del formulario
     ['reg-nombre','reg-apellido','reg-tel','reg-email'].forEach(function(id){
