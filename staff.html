@@ -299,6 +299,7 @@ function parsearQR(raw) {
     r.nombre       = decodeURIComponent(url.searchParams.get('n') || '');
     r.especialidad = decodeURIComponent(url.searchParams.get('e') || '');
     r.pase         = decodeURIComponent(url.searchParams.get('p') || '').toUpperCase();
+    r.email        = decodeURIComponent(url.searchParams.get('em') || '');
   } catch(ex) {
     r.uid = raw.toUpperCase();
     r.pase = 'DESCONOCIDO';
@@ -378,7 +379,7 @@ function registrarValido(res) {
   var a = res.a;
   var reg = {
     uid:a.uid, nombre:a.nombre||'—', especialidad:a.especialidad||'—',
-    pase:a.pase||'—', dia:diaNombre, fecha:diaFecha,
+    email:a.email||'', pase:a.pase||'—', dia:diaNombre, fecha:diaFecha,
     hora:res.hora, timestamp:new Date().toISOString(),
     staffId:staffId, sincronizado:false
   };
@@ -435,6 +436,7 @@ function enviarASheets(reg, cb) {
     uid:          reg.uid          || '',
     nombre:       reg.nombre       || '',
     especialidad: reg.especialidad || '',
+    email:        reg.email        || '',
     pase:         reg.pase         || '',
     dia:          reg.dia          || '',
     fecha:        reg.fecha        || '',
