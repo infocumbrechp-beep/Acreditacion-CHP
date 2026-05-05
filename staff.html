@@ -430,14 +430,26 @@ function actualizarPill() {
 ════════════════════════════════════════════════ */
 function enviarASheets(reg, cb) {
   if (!SHEETS_URL) { if(cb)cb(false); return; }
-  var body = JSON.stringify({tipo:'acreditacion',uid:reg.uid,nombre:reg.nombre,especialidad:reg.especialidad,pase:reg.pase,dia:reg.dia,fecha:reg.fecha,hora:reg.hora,staffId:reg.staffId,timestamp:reg.timestamp});
-  fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
-    .then(function(){reg.sincronizado=true;guardarLocal();actualizarPill();if(cb)cb(true);})
-    .catch(function(){
-      fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:body})
-        .then(function(){reg.sincronizado=true;guardarLocal();actualizarPill();if(cb)cb(true);})
-        .catch(function(){actualizarPill();if(cb)cb(false);});
-    });
+  var params = new URLSearchParams({
+    tipo:         'acreditacion',
+    uid:          reg.uid          || '',
+    nombre:       reg.nombre       || '',
+    especialidad: reg.especialidad || '',
+    pase:         reg.pase         || '',
+    dia:          reg.dia          || '',
+    fecha:        reg.fecha        || '',
+    hora:         reg.hora         || '',
+    staffId:      reg.staffId      || '',
+    timestamp:    reg.timestamp    || new Date().toISOString()
+  });
+  var img = new Image();
+  img.onload = img.onerror = function(){
+    reg.sincronizado = true;
+    guardarLocal();
+    actualizarPill();
+    if(cb) cb(true);
+  };
+  img.src = SHEETS_URL + '?' + params.toString();
 }
 
 /* ════════════════════════════════════════════════
