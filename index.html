@@ -1500,12 +1500,28 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    // Solo manipular DOM — NO tocar html5QrCode (cerrarCamara ya lo maneja async)
-    var ok   = document.getElementById('tracking-ok');
-    var area = document.getElementById('tracking-area');
-    if (ok)   ok.setAttribute('style','display:none');
-    if (area) area.setAttribute('style','display:block');
-    updateProgress();
+    // Matar stream de video directamente via navigator (funciona en iOS)
+    try {
+      var videos = document.querySelectorAll('video');
+      videos.forEach(function(v) {
+        if (v.srcObject) {
+          v.srcObject.getTracks().forEach(function(t) { t.stop(); });
+          v.srcObject = null;
+        }
+      });
+    } catch(e) {}
+    // Limpiar html5QrCode
+    try { if (html5QrCode) { html5QrCode = null; } qrActivo = false; } catch(e) {}
+    // UI con pequeño delay para dar tiempo al browser
+    setTimeout(function() {
+      try {
+        var ok   = document.getElementById('tracking-ok');
+        var area = document.getElementById('tracking-area');
+        if (ok)   ok.setAttribute('style', 'display:none');
+        if (area) area.setAttribute('style', 'display:block');
+        updateProgress();
+      } catch(e) {}
+    }, 200);
   }
 
   function updateProgress() {
