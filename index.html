@@ -1307,8 +1307,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   function forceResetTracking() {
     var ok = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
-    if (ok) { ok.style.display = 'none'; ok.style.cssText += ';display:none!important'; }
-    if (area) { area.style.display = 'block'; }
+    if (ok) { ok.removeAttribute('style'); ok.style.display = 'none'; }
+    if (area) { area.removeAttribute('style'); area.style.display = 'block'; }
     updateProgress();
   }
   function showDay(dayId) {
@@ -1500,8 +1500,17 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    if (html5QrCode && qrActivo) { cerrarCamara(); }
-    forceResetTracking();
+    if (html5QrCode && qrActivo) {
+      html5QrCode.stop().catch(function(){}).then(function(){
+        try { html5QrCode.clear(); } catch(e) {}
+        html5QrCode = null; qrActivo = false;
+        forceResetTracking();
+      });
+    } else {
+      if (html5QrCode) { try { html5QrCode.clear(); } catch(e) {} html5QrCode = null; }
+      qrActivo = false;
+      forceResetTracking();
+    }
   }
 
   function updateProgress() {
