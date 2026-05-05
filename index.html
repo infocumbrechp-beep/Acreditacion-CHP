@@ -1631,10 +1631,12 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     }
   }
   function cerrarCamaraYReset() {
-    document.getElementById('tracking-ok').style.display   = 'none';
-    document.getElementById('tracking-area').style.display = 'block';
-    try { document.querySelectorAll('video').forEach(function(v){ if(v.srcObject){v.srcObject.getTracks().forEach(function(t){t.stop();});v.srcObject=null;} }); } catch(e) {}
-    try { if(html5QrCode){html5QrCode=null;} qrActivo=false; } catch(e) {}
+    var ok   = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    alert('ok=' + (ok ? ok.style.display : 'NULL') + ' area=' + (area ? area.style.display : 'NULL'));
+    if (ok)   ok.style.display   = 'none';
+    if (area) area.style.display = 'block';
+    alert('despues: ok=' + ok.style.display + ' area=' + area.style.display);
   }
   window.cerrarCamara = cerrarCamara;
 
