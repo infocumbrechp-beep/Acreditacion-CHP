@@ -775,7 +775,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     <div class="ts-sub">conferencias registradas</div>
     <div class="ts-bar"><div class="ts-fill" id="track-bar" style="width:0%"></div></div>
     <div class="tracking-cert-hint" id="track-cert-hint"></div>
-    <button class="acred-reset-btn" style="background:var(--teal);margin-top:16px;" id="btn-reset-track">← Registrar otra</button>
+    <button class="acred-reset-btn" style="background:var(--teal);margin-top:16px;" id="btn-reset-track" onclick="cerrarCamaraYReset()">← Registrar otra</button>
   </div>
   <div id="tracking-area">
     <div class="section-label">Cómo funciona</div>
@@ -1832,7 +1832,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     bindEv('btn-reset-wrong', resetAcred);
     bindEv('btn-reset-invalid', resetAcred);
     bindEv('btn-scan-track', function(){ abrirCamara('track'); });
-    bindEv('btn-reset-track', resetTracking);
+    bindEv('btn-reset-track', cerrarCamaraYReset);
     bindEv('btn-reg-guardar', validarYGuardarRegistro);
     // Enter en campos del formulario
     ['reg-nombre','reg-apellido','reg-tel','reg-email'].forEach(function(id){
