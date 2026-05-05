@@ -150,7 +150,10 @@ body{font-family:'DM Sans',sans-serif;background:#0A1628;color:#E8F0FF;font-size
 <div id="app" class="hidden">
   <div class="topbar">
     <div><div class="t-title">Acreditación CHP 2026</div><div class="t-sub" id="lbl-dia">—</div></div>
-    <div class="t-badge" id="lbl-staff">—</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="t-badge" id="lbl-staff">—</div>
+      <button onclick="cerrarSesion()" style="background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;">⟲ Reset</button>
+    </div>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-n n-t" id="st-t">0</div><div class="stat-l">Total</div></div>
@@ -271,6 +274,17 @@ function iniciarApp() {
    STORAGE
 ════════════════════════════════════════════════ */
 function stKey() { return 'chp_' + staffId + '_' + diaFecha; }
+
+function cerrarSesion() {
+  if (!confirm('¿Borrar todos los registros locales de esta sesión?\n\nUsa esto SOLO si los datos ya están en Google Sheets.')) return;
+  try { localStorage.removeItem(stKey()); } catch(e) {}
+  registros = [];
+  escaneados = {};
+  refrescarContadores();
+  refrescarLista();
+  actualizarPill();
+  alert('✅ Sesión limpiada. Puedes volver a escanear.');
+}
 function cargarLocal() {
   try {
     var r = localStorage.getItem(stKey());
