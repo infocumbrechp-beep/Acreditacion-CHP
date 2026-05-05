@@ -959,6 +959,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       '?id=' + encodeURIComponent(datosAsistente.id || datosAsistente.email) +
       '&n=' + encodeURIComponent(datosAsistente.nombreCompleto) +
       '&e=' + encodeURIComponent(datosAsistente.especialidad) +
+      '&em=' + encodeURIComponent(datosAsistente.email || '') +
       '&p=' + encodeURIComponent(pase) +
       '&d=' + encodeURIComponent(dias.join(', '));
 
