@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+#resultado { display: none; background: #d4edda; padding: 20px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
+#area { display: block; background: #fff; padding: 20px; border-radius: 12px; }
+button { background: #00796B; color: white; border: none; padding: 14px 28px; border-radius: 100px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div id="resultado">
+  <div>✅ Conferencia registrada</div>
+  <button onclick="resetear()">← Registrar otra</button>
+</div>
+
+<div id="area">
+  <div>📷 Área de escaneo</div>
+  <button onclick="simularScan()">Simular escaneo</button>
+</div>
+
+<div id="log" style="margin-top:20px;font-size:12px;color:#666;"></div>
+
+<script>
+function log(msg) {
+  document.getElementById('log').innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + msg + '</div>';
+}
+
+function simularScan() {
+  log('Escaneando...');
+  var ok   = document.getElementById('resultado');
+  var area = document.getElementById('area');
+  ok.setAttribute('style','display:block');
+  area.setAttribute('style','display:none');
+  log('Mostrando resultado');
+}
+
+function resetear() {
+  log('Reseteando...');
+  var ok   = document.getElementById('resultado');
+  var area = document.getElementById('area');
+  ok.setAttribute('style','display:none');
+  area.setAttribute('style','display:block');
+  log('Reset completado');
+}
+</script>
+</body>
+</html>
