@@ -1628,29 +1628,26 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     }
   }
   function cerrarCamaraYReset() {
-    // Versión que resetea el tracking DESPUÉS de cerrar la cámara
-    var modal = document.getElementById('qr-modal');
-    if (modal) modal.style.display = 'none';
-    function doReset() {
-      html5QrCode = null;
-      qrActivo = false;
-      var ok   = document.getElementById('tracking-ok');
-      var area = document.getElementById('tracking-area');
-      if (ok)   ok.setAttribute('style','display:none');
-      if (area) area.setAttribute('style','display:block');
-      updateProgress();
-    }
-    if (html5QrCode) {
-      var _qr = html5QrCode;
-      html5QrCode = null;
-      qrActivo = false;
-      try {
-        _qr.stop().then(function(){ try{_qr.clear();}catch(e){} doReset(); })
-                  .catch(function(){ try{_qr.clear();}catch(e){} doReset(); });
-      } catch(e) { doReset(); }
-    } else {
-      doReset();
-    }
+    // Liberar video tracks directamente — no depender de promesas
+    try {
+      document.querySelectorAll('video').forEach(function(v) {
+        if (v.srcObject) {
+          v.srcObject.getTracks().forEach(function(t) { t.stop(); });
+          v.srcObject = null;
+        }
+      });
+    } catch(e) {}
+    // Limpiar escaner
+    try { if (html5QrCode) { html5QrCode = null; } } catch(e) {}
+    qrActivo = false;
+    // Ocultar modal
+    try { var modal = document.getElementById('qr-modal'); if (modal) modal.style.display = 'none'; } catch(e) {}
+    // Mostrar area, ocultar resultado — sin setTimeout, directo
+    var ok   = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    if (ok)   ok.style.cssText   = 'display:none';
+    if (area) area.style.cssText = 'display:block';
+    updateProgress();
   }
   window.cerrarCamara = cerrarCamara;
 
