@@ -191,7 +191,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .post-banner h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#1A5276;margin-bottom:8px;}
 .post-banner p{font-size:13px;color:var(--text-soft);margin-bottom:14px;}
 /* Tracking */
-.tracking-success{margin:16px;background:var(--green-bg);border:2px solid var(--green);border-radius:var(--radius-lg);padding:24px;text-align:center;animation:fadeIn 0.3s ease;}.tracking-success.hidden{display:none !important;}.tracking-area-hidden{display:none !important;}
+.tracking-success{display:none;margin:16px;background:var(--green-bg);border:2px solid var(--green);border-radius:var(--radius-lg);padding:24px;text-align:center;animation:fadeIn 0.3s ease;}
 .tracking-success .ts-icon{font-size:48px;margin-bottom:10px;}
 .tracking-success h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;}
 .tracking-success p{font-size:13px;color:var(--text-soft);}
@@ -767,7 +767,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
 <!-- PÁGINA 5 — MI ASISTENCIA -->
 <div class="page" id="page-tracking">
   <div class="page-header"><h2>📲 Mi Asistencia</h2><p>Registra tu presencia en cada conferencia</p></div>
-  <div class="tracking-success hidden" id="tracking-ok">
+  <div class="tracking-success" id="tracking-ok">
     <div class="ts-icon">✅</div>
     <h3 id="track-title">¡Asistencia registrada!</h3>
     <p id="track-conf-name">Conferencia registrada</p>
@@ -1464,8 +1464,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       else if (tipo==='warn') { trackOk.style.background='var(--amber-bg)'; trackOk.style.border='2px solid var(--amber)'; icon.textContent='⚠️'; titleEl.textContent=titulo; titleEl.style.color='var(--amber)'; }
       else { trackOk.style.background='var(--rose-bg)'; trackOk.style.border='2px solid var(--rose)'; icon.textContent='❌'; titleEl.textContent=titulo; titleEl.style.color='var(--rose)'; }
       // Mostrar resultado y ocultar área
-      trackOk.classList.remove('hidden');
-      trackArea.classList.add('tracking-area-hidden');
+      trackOk.style.display = 'block';
+      trackArea.style.display = 'none';
     }
 
     if (!conf) { mostrar('QR inválido','Esta conferencia no existe en el sistema.','error'); updateProgress(); return; }
@@ -1509,8 +1509,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     // UI directa
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
-    if (ok)   ok.classList.add('hidden');
-    if (area) area.classList.remove('tracking-area-hidden');
+    if (ok)   ok.style.display   = 'none';
+    if (area) area.style.display = 'block';
     updateProgress();
   }
 
@@ -1645,8 +1645,8 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     // Mostrar area, ocultar resultado
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
-    if (ok)   ok.classList.add('hidden');
-    if (area) area.classList.remove('tracking-area-hidden');
+    if (ok)   ok.style.display   = 'none';
+    if (area) area.style.display = 'block';
     updateProgress();
   }
   window.cerrarCamara = cerrarCamara;
