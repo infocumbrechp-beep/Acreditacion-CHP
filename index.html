@@ -1500,8 +1500,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    html5QrCode = null;
-    qrActivo = false;
+    // Solo manipular DOM — NO tocar html5QrCode (cerrarCamara ya lo maneja async)
     var ok   = document.getElementById('tracking-ok');
     var area = document.getElementById('tracking-area');
     if (ok)   ok.setAttribute('style','display:none');
@@ -1620,6 +1619,31 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
         try { html5QrCode.clear(); } catch(e) {}
         html5QrCode = null;
       }
+    }
+  }
+  function cerrarCamaraYReset() {
+    // Versión que resetea el tracking DESPUÉS de cerrar la cámara
+    var modal = document.getElementById('qr-modal');
+    if (modal) modal.style.display = 'none';
+    function doReset() {
+      html5QrCode = null;
+      qrActivo = false;
+      var ok   = document.getElementById('tracking-ok');
+      var area = document.getElementById('tracking-area');
+      if (ok)   ok.setAttribute('style','display:none');
+      if (area) area.setAttribute('style','display:block');
+      updateProgress();
+    }
+    if (html5QrCode) {
+      var _qr = html5QrCode;
+      html5QrCode = null;
+      qrActivo = false;
+      try {
+        _qr.stop().then(function(){ try{_qr.clear();}catch(e){} doReset(); })
+                  .catch(function(){ try{_qr.clear();}catch(e){} doReset(); });
+      } catch(e) { doReset(); }
+    } else {
+      doReset();
     }
   }
   window.cerrarCamara = cerrarCamara;
