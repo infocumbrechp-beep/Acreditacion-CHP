@@ -1463,10 +1463,9 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
       if (tipo==='ok') { trackOk.style.background='var(--green-bg)'; trackOk.style.border='2px solid var(--green)'; icon.textContent='✅'; titleEl.textContent=titulo; titleEl.style.color='var(--green)'; }
       else if (tipo==='warn') { trackOk.style.background='var(--amber-bg)'; trackOk.style.border='2px solid var(--amber)'; icon.textContent='⚠️'; titleEl.textContent=titulo; titleEl.style.color='var(--amber)'; }
       else { trackOk.style.background='var(--rose-bg)'; trackOk.style.border='2px solid var(--rose)'; icon.textContent='❌'; titleEl.textContent=titulo; titleEl.style.color='var(--rose)'; }
-      // Mostrar resultado y ocultar área — solo si la página está activa
-      trackOk.removeAttribute('style');
-      trackOk.style.display = 'block';
-      trackArea.style.display = 'none';
+      // Mostrar resultado y ocultar área
+      trackOk.style.cssText = 'display:block';
+      trackArea.style.cssText = 'display:none';
     }
 
     if (!conf) { mostrar('QR inválido','Esta conferencia no existe en el sistema.','error'); updateProgress(); return; }
@@ -1500,28 +1499,19 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    // Matar stream de video directamente via navigator (funciona en iOS)
+    // Liberar cámara via video tracks
     try {
-      var videos = document.querySelectorAll('video');
-      videos.forEach(function(v) {
-        if (v.srcObject) {
-          v.srcObject.getTracks().forEach(function(t) { t.stop(); });
-          v.srcObject = null;
-        }
+      document.querySelectorAll('video').forEach(function(v) {
+        if (v.srcObject) { v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject=null; }
       });
     } catch(e) {}
-    // Limpiar html5QrCode
-    try { if (html5QrCode) { html5QrCode = null; } qrActivo = false; } catch(e) {}
-    // UI con pequeño delay para dar tiempo al browser
-    setTimeout(function() {
-      try {
-        var ok   = document.getElementById('tracking-ok');
-        var area = document.getElementById('tracking-area');
-        if (ok)   ok.setAttribute('style', 'display:none');
-        if (area) area.setAttribute('style', 'display:block');
-        updateProgress();
-      } catch(e) {}
-    }, 200);
+    try { if (html5QrCode) { html5QrCode=null; } qrActivo=false; } catch(e) {}
+    // UI directa
+    var ok   = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    if (ok)   ok.style.cssText   = 'display:none';
+    if (area) area.style.cssText = 'display:block';
+    updateProgress();
   }
 
   function updateProgress() {
