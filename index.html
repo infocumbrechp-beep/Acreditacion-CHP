@@ -775,7 +775,7 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     <div class="ts-sub">conferencias registradas</div>
     <div class="ts-bar"><div class="ts-fill" id="track-bar" style="width:0%"></div></div>
     <div class="tracking-cert-hint" id="track-cert-hint"></div>
-    <button class="acred-reset-btn" style="background:var(--teal);margin-top:16px;" id="btn-reset-track">← Registrar otra</button>
+    <button class="acred-reset-btn" style="background:var(--teal);margin-top:16px;" id="btn-reset-track" onclick="resetTracking()">← Registrar otra</button>
   </div>
   <div id="tracking-area">
     <div class="section-label">Cómo funciona</div>
@@ -1500,8 +1500,19 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   }
 
   function resetTracking() {
-    if (html5QrCode && qrActivo) { cerrarCamara(); }
-    forceResetTracking();
+    // Cerrar cámara si está activa
+    if (html5QrCode) {
+      try { html5QrCode.stop().catch(function(){}); } catch(e) {}
+      try { html5QrCode.clear(); } catch(e) {}
+      html5QrCode = null;
+    }
+    qrActivo = false;
+    // Mostrar área de escaneo, ocultar resultado
+    var ok   = document.getElementById('tracking-ok');
+    var area = document.getElementById('tracking-area');
+    if (ok)   { ok.removeAttribute('style');   ok.style.display   = 'none';  }
+    if (area) { area.removeAttribute('style'); area.style.display = 'block'; }
+    updateProgress();
   }
 
   function updateProgress() {
