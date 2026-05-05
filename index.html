@@ -1863,7 +1863,14 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
     bindEv('btn-reset-valid', resetAcred);
     bindEv('btn-reset-wrong', resetAcred);
     bindEv('btn-reset-invalid', resetAcred);
-    bindEv('btn-scan-track', function(){ abrirCamaraIOS('track'); });
+    bindEv('btn-scan-track', function(){
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) {
+        abrirCamaraIOS('track');
+      } else {
+        abrirCamara('track');
+      }
+    });
     // btn-reset-track manejado por ontouchstart inline
     bindEv('btn-reg-guardar', validarYGuardarRegistro);
     // Enter en campos del formulario
