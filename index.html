@@ -1915,9 +1915,19 @@ select.reg-input { background-image:url("data:image/svg+xml,%3Csvg xmlns='http:/
   window.abrirInstall = abrirInstall;
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000); });
+    document.addEventListener('DOMContentLoaded', function(){ bindAll(); updateProgress(); iniciarApp();
+    // Limpiar URL inmediatamente para evitar que procesarURLParams capture params residuales de la sesión anterior
+    if (window.location.search && window.history && window.history.replaceState) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000); });
   } else {
-    bindAll(); updateProgress(); iniciarApp(); setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000);
+    bindAll(); updateProgress(); iniciarApp();
+    // Limpiar URL inmediatamente para evitar que procesarURLParams capture params residuales de la sesión anterior
+    if (window.location.search && window.history && window.history.replaceState) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    setTimeout(procesarURLParams, 100); actualizarNowCard(); setInterval(actualizarNowCard, 60000);
   }
 
 
